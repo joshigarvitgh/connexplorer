@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ConnExplorer | Atlas Info</title>
+  <style>
+    :root {
+      --ink: #0f172a;
+      --muted: #4b5563;
+      --panel: #f7f8fb;
+      --accent: #001450;
+      --accent-strong: #BC1589;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Open Sans', 'Arial', sans-serif;
+      background: #ffffff;
+      color: var(--ink);
+      line-height: 1.6;
+    }
+
+    header {
+      background: #00008c;
+      color: white;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    header img {
+      height: 36px;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 18px;
+      letter-spacing: -0.2px;
+      font-weight: 700;
+    }
+
+    .shell {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 18px 20px 48px;
+    }
+
+    .pill-nav {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .pill-nav a {
+      padding: 8px 12px;
+      background: #f4f6fb;
+      border-radius: 8px;
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    .pill-nav a:hover {
+      background: #e7eaf5;
+      color: var(--accent-strong);
+    }
+
+    section {
+      margin-top: 18px;
+      background: #fff;
+      border: 1px solid #edf0f4;
+      border-radius: 16px;
+      padding: 18px;
+      box-shadow: 0 10px 22px rgba(15, 23, 42, 0.05);
+    }
+
+    section h2 {
+      margin: 0 0 10px;
+      font-size: 20px;
+      letter-spacing: -0.15px;
+    }
+
+    p {
+      margin: 0 0 10px;
+      color: var(--muted);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 8px 10px;
+      border-bottom: 1px solid #e5e7eb;
+      font-size: 14px;
+    }
+
+    th {
+      color: var(--ink);
+      background: #f7f8fb;
+      font-weight: 700;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #eef2ff;
+      color: #312e81;
+      font-weight: 700;
+      font-size: 12px;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="./TUD_Logo_RGB_horizontal_weiß_de.svg" alt="TU Dresden logo">
+    <h1>Atlas Information</h1>
+  </header>
+
+  <main class="shell">
+    <section>
+      <h2>Atlas selection</h2>
+      <p class="muted">Pick an atlas to view its abbreviations and mappings. The selection also updates via the <code>?atlas=</code> query parameter.</p>
+      <select id="atlas-select">
+        <option value="aal3">AAL3</option>
+      </select>
+    </section>
+
+    <section>
+      <h2>Network abbreviations (AAL3)</h2>
+      <p class="muted">Loaded from <code>data/aal3_matrix_order.json</code>. Abbreviation to full network name.</p>
+      <div id="networks-state" class="muted">Loading…</div>
+      <table id="networks-table" style="display:none;">
+        <thead>
+          <tr><th>Abbreviation</th><th>Full name</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>Atlas labels and alternate names</h2>
+      <p class="muted">Loaded from <code>data/aal3_network_mapping.csv</code>. Atlas label to alternate name (name_alt) and network.</p>
+      <div id="alias-state" class="muted">Loading…</div>
+      <table id="alias-table" style="display:none;">
+        <thead>
+          <tr><th>#</th><th>Atlas label</th><th>Alternate name</th><th>Network</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>Region to network mapping (AAL3)</h2>
+      <p class="muted">Loaded from <code>data/ND.csv</code>. Region index, region label, and associated network.</p>
+      <div id="regions-state" class="muted">Loading…</div>
+      <table id="regions-table" style="display:none;">
+        <thead>
+          <tr><th>#</th><th>Region</th><th>Network</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+  </main>
+
+  <script>
+    const atlasOptions = [
+      { key: 'aal3', label: 'AAL3' }
+    ];
+
+    function parseCsv(text) {
+      const lines = text.split(/\r?\n/).filter(Boolean);
+      if (!lines.length) return [];
+      const headers = lines[0].split(',');
+      return lines.slice(1).map(line => {
+        return line.split(',').reduce((acc, val, idx) => {
+          acc[headers[idx]] = val.trim();
+          return acc;
+        }, {});
+      });
+    }
+
+    function setState(id, msg) {
+      const el = document.getElementById(id);
+      if (el) el.textContent = msg;
+    }
+
+    function fillTable(tbody, rows) {
+      tbody.innerHTML = '';
+      rows.forEach(row => tbody.appendChild(row));
+    }
+
+    function setSelectOptions() {
+      const sel = document.getElementById('atlas-select');
+      sel.innerHTML = '';
+      atlasOptions.forEach(opt => {
+        const option = document.createElement('option');
+        option.value = opt.key;
+        option.textContent = opt.label;
+        sel.appendChild(option);
+      });
+    }
+
+    async function loadNetworks(atlasKey) {
+      if (atlasKey !== 'aal3') {
+        setState('networks-state', 'No network abbreviations available for this atlas.');
+        document.getElementById('networks-table').style.display = 'none';
+        return;
+      }
+      try {
+        const res = await fetch('./data/aal3_matrix_order.json?v=' + Date.now(), { cache: 'no-store' });
+        if (!res.ok) throw new Error('Failed to load network mapping');
+        const data = await res.json();
+        const { net_labels = [], net_labels_full = [] } = data;
+        if (!net_labels.length) throw new Error('No network labels found');
+
+        const tbody = document.querySelector('#networks-table tbody');
+        const rows = net_labels.map((abbr, idx) => {
+          const tr = document.createElement('tr');
+          const tdAbbr = document.createElement('td');
+          tdAbbr.textContent = abbr;
+          const tdFull = document.createElement('td');
+          tdFull.textContent = net_labels_full[idx] || '';
+          tr.appendChild(tdAbbr);
+          tr.appendChild(tdFull);
+          return tr;
+        });
+
+        fillTable(tbody, rows);
+        document.getElementById('networks-state').style.display = 'none';
+        document.getElementById('networks-table').style.display = '';
+      } catch (err) {
+        setState('networks-state', err.message);
+        console.error(err);
+      }
+    }
+
+    async function loadRegions(atlasKey) {
+      if (atlasKey !== 'aal3') {
+        setState('regions-state', 'No region mapping available for this atlas.');
+        document.getElementById('regions-table').style.display = 'none';
+        return;
+      }
+      try {
+        const res = await fetch('./data/ND.csv?v=' + Date.now(), { cache: 'no-store' });
+        if (!res.ok) throw new Error('Failed to load ND.csv');
+        const text = await res.text();
+        const rows = parseCsv(text);
+        if (!rows.length) throw new Error('No region data found');
+
+        const tbody = document.querySelector('#regions-table tbody');
+        const trs = rows.map(r => {
+          const tr = document.createElement('tr');
+          const tdIdx = document.createElement('td');
+          tdIdx.textContent = r.N || '';
+          const tdRegion = document.createElement('td');
+          tdRegion.textContent = r.Region || '';
+          const tdNet = document.createElement('td');
+          tdNet.textContent = r.Network || '';
+          tr.appendChild(tdIdx);
+          tr.appendChild(tdRegion);
+          tr.appendChild(tdNet);
+          return tr;
+        });
+
+        fillTable(tbody, trs);
+        document.getElementById('regions-state').style.display = 'none';
+        document.getElementById('regions-table').style.display = '';
+      } catch (err) {
+        setState('regions-state', err.message);
+        console.error(err);
+      }
+    }
+
+    async function loadAlias(atlasKey) {
+      if (atlasKey !== 'aal3') {
+        setState('alias-state', 'No alternate naming available for this atlas.');
+        document.getElementById('alias-table').style.display = 'none';
+        return;
+      }
+      try {
+        const res = await fetch('./data/aal3_network_mapping.csv?v=' + Date.now(), { cache: 'no-store' });
+        if (!res.ok) throw new Error('Failed to load aal3_network_mapping.csv');
+        const text = await res.text();
+        const rows = parseCsv(text);
+        if (!rows.length) throw new Error('No alias data found');
+
+        const tbody = document.querySelector('#alias-table tbody');
+        const trs = rows.map(r => {
+          const tr = document.createElement('tr');
+          const tdIdx = document.createElement('td');
+          tdIdx.textContent = r.id || '';
+          const tdLabel = document.createElement('td');
+          tdLabel.textContent = r.atlas_label || '';
+          const tdAlt = document.createElement('td');
+          tdAlt.textContent = r.name_alt || '';
+          const tdNet = document.createElement('td');
+          tdNet.textContent = r.network || '';
+          tr.appendChild(tdIdx);
+          tr.appendChild(tdLabel);
+          tr.appendChild(tdAlt);
+          tr.appendChild(tdNet);
+          return tr;
+        });
+
+        fillTable(tbody, trs);
+        document.getElementById('alias-state').style.display = 'none';
+        document.getElementById('alias-table').style.display = '';
+      } catch (err) {
+        setState('alias-state', err.message);
+        console.error(err);
+      }
+    }
+
+    function getAtlasFromQuery() {
+      const params = new URLSearchParams(window.location.search);
+      return (params.get('atlas') || 'aal3').toLowerCase();
+    }
+
+    function updateQuery(atlasKey) {
+      const params = new URLSearchParams(window.location.search);
+      params.set('atlas', atlasKey);
+      const newUrl = window.location.pathname + '?' + params.toString();
+      window.history.replaceState({}, '', newUrl);
+    }
+
+    async function refresh(atlasKey) {
+      loadNetworks(atlasKey);
+      loadAlias(atlasKey);
+      loadRegions(atlasKey);
+    }
+
+    function initAtlasSelection() {
+      setSelectOptions();
+      const currentAtlas = getAtlasFromQuery();
+      const sel = document.getElementById('atlas-select');
+      sel.value = currentAtlas;
+      sel.addEventListener('change', () => {
+        const next = sel.value;
+        updateQuery(next);
+        refresh(next);
+      });
+      refresh(currentAtlas);
+    }
+
+    initAtlasSelection();
+  </script>
+</body>
+</html>

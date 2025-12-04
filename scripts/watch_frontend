@@ -1,0 +1,3 @@
+#! /usr/bin/env bash
+
+pipenv run watchmedo shell-command --pattern "*.elm" --recursive --command scripts/build_frontend

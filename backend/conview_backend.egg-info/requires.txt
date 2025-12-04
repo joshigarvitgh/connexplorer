@@ -1,0 +1,7 @@
+numpy
+nibabel
+pytest
+nilearn
+click
+pyparadigm>=1.0.10
+matplotlib

@@ -1,0 +1,24 @@
+{
+  "net_labels": [
+    "SM", "CEN", "VAN", "Lang", "DMN", "Aud",
+    "Limbic", "SN", "Visual", "DAN", "BG",
+    "CBL", "Thal", "BS"
+  ],
+
+  "net_labels_full": [
+    "Sensorimotor network",
+    "Central executive network",
+    "Ventral attention network",
+    "Language network",
+    "Default mode network",
+    "Auditory network",
+    "Limbic/Paralimbic network",
+    "Salience network",
+    "Visual network",
+    "Dorsal attention network",
+    "Basal ganglia network",
+    "Cerebellum",
+    "Thalamus",
+    "Brain stem"
+  ]
+}

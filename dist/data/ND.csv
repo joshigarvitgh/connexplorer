@@ -1,0 +1,167 @@
+N,Region,Network
+1,Precentral_L,Sensorimotor network
+2,Precentral_R,Sensorimotor network
+3,Frontal_Sup_2_L,Central executive network
+4,Frontal_Sup_2_R,Central executive network
+5,Frontal_Mid_2_L,Central executive network
+6,Frontal_Mid_2_R,Central executive network
+7,Frontal_Inf_Oper_L,Ventral attention network
+8,Frontal_Inf_Oper_R,Ventral attention network
+9,Frontal_Inf_Tri_L,Language network
+10,Frontal_Inf_Tri_R,Language network
+11,Frontal_Inf_Orb_2_L,Default mode network
+12,Frontal_Inf_Orb_2_R,Default mode network
+13,Rolandic_Oper_L,Auditory network
+14,Rolandic_Oper_R,Auditory network
+15,Supp_Motor_Area_L,Sensorimotor network
+16,Supp_Motor_Area_R,Sensorimotor network
+17,Olfactory_L,Limbic/Paralimbic network
+18,Olfactory_R,Limbic/Paralimbic network
+19,Frontal_Sup_Medial_L,Language network
+20,Frontal_Sup_Medial_R,Language network
+21,Frontal_Med_Orb_L,Default mode network
+22,Frontal_Med_Orb_R,Default mode network
+23,Rectus_L,Limbic/Paralimbic network
+24,Rectus_R,Limbic/Paralimbic network
+25,OFCmed_L,Limbic/Paralimbic network
+26,OFCmed_R,Limbic/Paralimbic network
+27,OFCant_L,Limbic/Paralimbic network
+28,OFCant_R,Limbic/Paralimbic network
+29,OFCpost_L,Limbic/Paralimbic network
+30,OFCpost_R,Limbic/Paralimbic network
+31,OFClat_L,Central executive network
+32,OFClat_R,Central executive network
+33,Insula_L,Salience network
+34,Insula_R,Salience network
+37,Cingulate_Mid_L,Salience network
+38,Cingulate_Mid_R,Salience network
+39,Cingulate_Post_L,Default mode network
+40,Cingulate_Post_R,Default mode network
+41,Hippocampus_L,Limbic/Paralimbic network
+42,Hippocampus_R,Limbic/Paralimbic network
+43,ParaHippocampal_L,Limbic/Paralimbic network
+44,ParaHippocampal_R,Limbic/Paralimbic network
+45,Amygdala_L,Limbic/Paralimbic network
+46,Amygdala_R,Limbic/Paralimbic network
+47,Calcarine_L,Visual network
+48,Calcarine_R,Visual network
+49,Cuneus_L,Visual network
+50,Cuneus_R,Visual network
+51,Lingual_L,Visual network
+52,Lingual_R,Visual network
+53,Occipital_Sup_L,Visual network
+54,Occipital_Sup_R,Visual network
+55,Occipital_Mid_L,Visual network
+56,Occipital_Mid_R,Visual network
+57,Occipital_Inf_L,Visual network
+58,Occipital_Inf_R,Visual network
+59,Fusiform_L,Visual network
+60,Fusiform_R,Visual network
+61,Postcentral_L,Sensorimotor network
+62,Postcentral_R,Sensorimotor network
+63,Parietal_Sup_L,Dorsal attention network
+64,Parietal_Sup_R,Dorsal attention network
+65,Parietal_Inf_L,Dorsal attention network
+66,Parietal_Inf_R,Dorsal attention network
+67,SupraMarginal_L,Ventral attention network
+68,SupraMarginal_R,Ventral attention network
+69,Angular_L,Language network
+70,Angular_R,Language network
+71,Precuneus_L,Default mode network
+72,Precuneus_R,Default mode network
+73,Paracentral_Lobule_L,Sensorimotor network
+74,Paracentral_Lobule_R,Sensorimotor network
+75,Caudate_L,Basal ganglia network
+76,Caudate_R,Basal ganglia network
+77,Putamen_L,Basal ganglia network
+78,Putamen_R,Basal ganglia network
+79,Pallidum_L,Basal ganglia network
+80,Pallidum_R,Basal ganglia network
+83,Heschl_L,Auditory network
+84,Heschl_R,Auditory network
+85,Temporal_Sup_L,Language network
+86,Temporal_Sup_R,Language network
+87,Temporal_Pole_Sup_L,Limbic/Paralimbic network
+88,Temporal_Pole_Sup_R,Limbic/Paralimbic network
+89,Temporal_Mid_L,Language network
+90,Temporal_Mid_R,Language network
+91,Temporal_Pole_Mid_L,Limbic/Paralimbic network
+92,Temporal_Pole_Mid_R,Limbic/Paralimbic network
+93,Temporal_Inf_L,Language network
+94,Temporal_Inf_R,Language network
+95,Cerebellum_Crus1_L,Cerebellum
+96,Cerebellum_Crus1_R,Cerebellum
+97,Cerebellum_Crus2_L,Cerebellum
+98,Cerebellum_Crus2_R,Cerebellum
+99,Cerebellum_3_L,Cerebellum
+100,Cerebellum_3_R,Cerebellum
+101,Cerebellum_4_5_L,Cerebellum
+102,Cerebellum_4_5_R,Cerebellum
+103,Cerebellum_6_L,Cerebellum
+104,Cerebellum_6_R,Cerebellum
+105,Cerebellum_7b_L,Cerebellum
+106,Cerebellum_7b_R,Cerebellum
+107,Cerebellum_8_L,Cerebellum
+108,Cerebellum_8_R,Cerebellum
+109,Cerebellum_9_L,Cerebellum
+110,Cerebellum_9_R,Cerebellum
+111,Cerebellum_10_L,Cerebellum
+112,Cerebellum_10_R,Cerebellum
+113,Vermis_1_2,Cerebellum
+114,Vermis_3,Cerebellum
+115,Vermis_4_5,Cerebellum
+116,Vermis_6,Cerebellum
+117,Vermis_7,Cerebellum
+118,Vermis_8,Cerebellum
+119,Vermis_9,Cerebellum
+120,Vermis_10,Cerebellum
+121,Thal_AV_L,Thalamus
+122,Thal_AV_R,Thalamus
+123,Thal_LP_L,Thalamus
+124,Thal_LP_R,Thalamus
+125,Thal_VA_L,Thalamus
+126,Thal_VA_R,Thalamus
+127,Thal_VL_L,Thalamus
+128,Thal_VL_R,Thalamus
+129,Thal_VPL_L,Thalamus
+130,Thal_VPL_R,Thalamus
+131,Thal_IL_L,Thalamus
+132,Thal_IL_R,Thalamus
+133,Thal_Re_L,Thalamus
+134,Thal_Re_R,Thalamus
+135,Thal_MDm_L,Thalamus
+136,Thal_MDm_R,Thalamus
+137,Thal_MDl_L,Thalamus
+138,Thal_MDl_R,Thalamus
+139,Thal_LGN_L,Thalamus
+140,Thal_LGN_R,Thalamus
+141,Thal_MGN_L,Thalamus
+142,Thal_MGN_R,Thalamus
+143,Thal_PuI_L,Thalamus
+144,Thal_PuI_R,Thalamus
+145,Thal_PuM_L,Thalamus
+146,Thal_PuM_R,Thalamus
+147,Thal_PuA_L,Thalamus
+148,Thal_PuA_R,Thalamus
+149,Thal_PuL_L,Thalamus
+150,Thal_PuL_R,Thalamus
+151,ACC_sub_L,Default mode network
+152,ACC_sub_R,Default mode network
+153,ACC_pre_L,Default mode network
+154,ACC_pre_R,Default mode network
+155,ACC_sup_L,Salience network
+156,ACC_sup_R,Salience network
+157,N_Acc_L,Basal ganglia network
+158,N_Acc_R,Basal ganglia network
+159,VTA_L,Brain stem
+160,VTA_R,Brain stem
+161,SN_pc_L,Brain stem
+162,SN_pc_R,Brain stem
+163,SN_pr_L,Brain stem
+164,SN_pr_R,Brain stem
+165,Red_N_L,Brain stem
+166,Red_N_R,Brain stem
+167,LC_L,Brain stem
+168,LC_R,Brain stem
+169,Raphe_D,Brain stem
+170,Raphe_M,Brain stem

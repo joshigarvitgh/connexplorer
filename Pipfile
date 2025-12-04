@@ -1,0 +1,20 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+websockets = "*"
+watchdog = {extras = ["watchmedo"], version = "*"}
+pygame = "==2.5.2"
+pyparadigm = ">=1.2.1"
+argh = "*"
+conview-backend = {editable = true, path = "./backend"}
+ipdb = "*"
+python-lsp-server = {extras = ["pylint"], version = "*"}
+openpyxl = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.11"

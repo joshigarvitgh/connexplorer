@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 360" role="img" aria-label="Technische Universität Dresden logo">
+  <defs>
+    <style>
+      .logo-fill { fill: #ffffff; }
+      .logo-text { fill: #ffffff; font-family: 'Helvetica Neue', Arial, sans-serif; font-weight: 700; font-size: 92px; }
+    </style>
+  </defs>
+  <rect width="900" height="360" fill="none" />
+  <g transform="translate(48,72)">
+    <path class="logo-fill" d="M116 0 0 116l48 48 116-116z"/>
+    <path class="logo-fill" d="M116 148 0 264l48 48 116-116z"/>
+    <path class="logo-fill" d="M180 56h88l-44 44z"/>
+    <path class="logo-fill" d="M180 208h88l-44 44z"/>
+    <text class="logo-text" x="340" y="90">Technische</text>
+    <text class="logo-text" x="340" y="180">Universität</text>
+    <text class="logo-text" x="340" y="270">Dresden</text>
+  </g>
+</svg>

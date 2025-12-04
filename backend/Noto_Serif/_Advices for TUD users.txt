@@ -1,0 +1,37 @@
+Noto Serif Static Font
+=======================
+
+This download contains only Noto Serif as static fonts.
+Don’t use the variable Fonts, available at Google Fonts, as they are not supported by all systems..
+
+
+The files for TUD Noto Serif Layout are:
+  Noto_Serif/static/NotoSerif-Thin.ttf
+  Noto_Serif/static/NotoSerif-ExtraLight.ttf
+  Noto_Serif/static/NotoSerif-Light.ttf
+  Noto_Serif/static/NotoSerif-Regular.ttf
+  Noto_Serif/static/NotoSerif-Medium.ttf
+  Noto_Serif/static/NotoSerif-SemiBold.ttf
+  Noto_Serif/static/NotoSerif-Bold.ttf
+  Noto_Serif/static/NotoSerif-ExtraBold.ttf
+  Noto_Serif/static/NotoSerif-Black.ttf
+  Noto_Serif/static/NotoSerif-ThinItalic.ttf
+  Noto_Serif/static/NotoSerif-ExtraLightItalic.ttf
+  Noto_Serif/static/NotoSerif-LightItalic.ttf
+  Noto_Serif/static/NotoSerif-Italic.ttf
+  Noto_Serif/static/NotoSerif-MediumItalic.ttf
+  Noto_Serif/static/NotoSerif-SemiBoldItalic.ttf
+  Noto_Serif/static/NotoSerif-BoldItalic.ttf
+  Noto_Serif/static/NotoSerif-ExtraBoldItalic.ttf
+  Noto_Serif/static/NotoSerif-BlackItalic.ttf
+
+License
+-------
+Please read the full license text (OFL.txt) to understand the permissions,
+restrictions and requirements for usage, redistribution, and modification.
+
+You can use them in your products & projects – print or digital,
+commercial or otherwise.
+
+This isn't legal advice, please consider consulting a lawyer and see the full
+license for all details.

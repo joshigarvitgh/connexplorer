@@ -1,0 +1,37 @@
+Noto Sans Static Font
+=======================
+
+This download contains only Noto Sans as static fonts.
+Don’t use the variable Fonts, available at Google Fonts, as they are not supported by all systems..
+
+
+The files for TUD Noto Sans Layout are:
+  Noto_Sans/static/NotoSans-Thin.ttf
+  Noto_Sans/static/NotoSans-ExtraLight.ttf
+  Noto_Sans/static/NotoSans-Light.ttf
+  Noto_Sans/static/NotoSans-Regular.ttf
+  Noto_Sans/static/NotoSans-Medium.ttf
+  Noto_Sans/static/NotoSans-SemiBold.ttf
+  Noto_Sans/static/NotoSans-Bold.ttf
+  Noto_Sans/static/NotoSans-ExtraBold.ttf
+  Noto_Sans/static/NotoSans-Black.ttf
+  Noto_Sans/static/NotoSans-ThinItalic.ttf
+  Noto_Sans/static/NotoSans-ExtraLightItalic.ttf
+  Noto_Sans/static/NotoSans-LightItalic.ttf
+  Noto_Sans/static/NotoSans-Italic.ttf
+  Noto_Sans/static/NotoSans-MediumItalic.ttf
+  Noto_Sans/static/NotoSans-SemiBoldItalic.ttf
+  Noto_Sans/static/NotoSans-BoldItalic.ttf
+  Noto_Sans/static/NotoSans-ExtraBoldItalic.ttf
+  Noto_Sans/static/NotoSans-BlackItalic.ttf
+
+License
+-------
+Please read the full license text (OFL.txt) to understand the permissions,
+restrictions and requirements for usage, redistribution, and modification.
+
+You can use them in your products & projects – print or digital,
+commercial or otherwise.
+
+This isn't legal advice, please consider consulting a lawyer and see the full
+license for all details.

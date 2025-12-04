@@ -1,0 +1,171 @@
+id,atlas_label,nd_region,network,name_alt,nd_region_back
+1,1_28208_Left_Precentral,PreCG_L,Sensorimotor network,PreCG_L,Precentral_L
+2,2_27048_Right_Precental,PreCG_R,Sensorimotor network,PreCG_R,Precentral_R
+3,3_38960_Left_Frontal_Superior_2,SFG_L,Central executive network,SFG_L,Frontal_Sup_2_L
+4,4_41008_Right_Frontal_Superior_2,SFG_R,Central executive network,SFG_R,Frontal_Sup_2_R
+5,5_36056_Left_Frontal_Middle_2,MFG_L,Central executive network,MFG_L,Frontal_Mid_2_L
+6,6_38880_Right_Frontal_Middle_2,MFG_R,Central executive network,MFG_R,Frontal_Mid_2_R
+7,7_8304_Left_Frontal_Inferior_Opercular,IFGop_L,Ventral attention network,IFGop_L,Frontal_Inf_Oper_L
+8,8_11192_Right_Frontal_Inferior_Opercular,IFGop_R,Ventral attention network,IFGop_R,Frontal_Inf_Oper_R
+9,9_20232_Left_Frontal_Inferior_Triangular,IFGtri_L,Language network,IFGtri_L,Frontal_Inf_Tri_L
+10,10_17208_Right_Frontal_Inferior_Triangular,IFGtri_R,Language network,IFGtri_R,Frontal_Inf_Tri_R
+11,11_6512_Left_Frontal_Inferior_Orbital_2,IFGorb_L,Default mode network,IFGorb_L,Frontal_Inf_Orb_2_L
+12,12_6992_Right_Frontal_Inferior_Orbital_2,IFGorb_R,Default mode network,IFGorb_R,Frontal_Inf_Orb_2_R
+13,13_7904_Left_Rolandic_Opercular,RolOp_L,Auditory network,RolOp_L,Rolandic_Oper_L
+14,14_10648_Right_Rolandic_Opercular,RolOp_R,Auditory network,RolOp_R,Rolandic_Oper_R
+15,15_17176_Left_Supplementar_Motor_Area,SMA_L,Sensorimotor network,SMA_L,Supp_Motor_Area_L
+16,16_18968_Right_Supplementat_Motor_Area,SMA_R,Sensorimotor network,SMA_R,Supp_Motor_Area_R
+17,17_2328_Left_Olfactory,OLF_L,Limbic/Paralimbic network,OLF_L,Olfactory_L
+18,18_2304_Right_Olfactory,OLF_R,Limbic/Paralimbic network,OLF_R,Olfactory_R
+19,19_23936_Left_Frontal_Superior_Medial,SFGmed_L,Language network,SFGmed_L,Frontal_Sup_Medial_L
+20,20_17072_Right_Frontal_Superior_Medial,SFGmed_R,Language network,SFGmed_R,Frontal_Sup_Medial_R
+21,21_5752_Frontal_Medial_Orbital,OFCmed_L,Default mode network,OFCmed_L,Frontal_Med_Orb_L
+22,22_6848_Frontal_Medial_Orbital,OFCmed_R,Default mode network,OFCmed_R,Frontal_Med_Orb_R
+23,23_6816_Left_Rectus,REC_L,Limbic/Paralimbic network,REC_L,Rectus_L
+24,24_5960_Right_Rectus,REC_R,Limbic/Paralimbic network,REC_R,Rectus_R
+25,25_4400_Left_Orbito_Frontal_Cortex_Medial,OFC_L,Limbic/Paralimbic network,OFC_L,OFCmed_L
+26,26_4968_Right_Orbito_Frontal_Cortex_Medial,OFC_R,Limbic/Paralimbic network,OFC_R,OFCmed_R
+27,27_3544_Left_Orbito_Frontal_Cortex_Anterior,OFCant_L,Limbic/Paralimbic network,OFCant_L,OFCant_L
+28,28_5184_Right_Orbito_Frontal_Cortex_Anterior,OFCant_R,Limbic/Paralimbic network,OFCant_R,OFCant_R
+29,29_4536_Left_Orbito_Frontal_Cortex_Posterior,OFCpost_L,Limbic/Paralimbic network,OFCpost_L,OFCpost_L
+30,30_4488_Right_Orbito_Frontal_Cortex_Posterior,OFCpost_R,Limbic/Paralimbic network,OFCpost_R,OFCpost_R
+31,31_1576_Left_Orbito_Frontal_Cortex_Lateral,OFClat_L,Central executive network,OFClat_L,OFClat_L
+32,32_1504_Right_Orbito_Frontal_Cortex_Lateral,OFClat_R,Central executive network,OFClat_R,OFClat_R
+33,33_14864_Left_Insula,INS_L,Salience network,INS_L,Insula_L
+34,34_14160_Right_Insula,INS_R,Salience network,INS_R,Insula_R
+35,35_0_Left_Cingulate_Anterior,ACG_L,none,ACG_L,none
+36,36_0_Right_Cingulate_Anterior,ACG_R,none,ACG_R,none
+37,37_15528_Left_Cingulate_Middle,DCG_L,Salience network,DCG_L,Cingulate_Mid_L
+38,38_17624_Right_Cingulate_Middle,DCG_R,Salience network,DCG_R,Cingulate_Mid_R
+39,39_3704_Left_Cingulate_Posterior,PCG_L,Default mode network,PCG_L,Cingulate_Post_L
+40,40_2680_Right_Cingulate_Posterior,PCG_R,Default mode network,PCG_R,Cingulate_Post_R
+41,41_7456_Left_Hippocampus,HIPP_L,Limbic/Paralimbic network,HIPP_L,Hippocampus_L
+42,42_7568_Right_Hippocampus,HIPP_R,Limbic/Paralimbic network,HIPP_R,Hippocampus_R
+43,43_7824_Left_ParaHippocampal,PHG_L,Limbic/Paralimbic network,PHG_L,ParaHippocampal_L
+44,44_9056_Right_paraHippocampal,PHG_R,Limbic/Paralimbic network,PHG_R,ParaHippocampal_R
+45,45_1760_Left_Amygdala,AMYG_L,Limbic/Paralimbic network,AMYG_L,Amygdala_L
+46,46_1984_Right_Amygdala,AMYG_R,Limbic/Paralimbic network,AMYG_R,Amygdala_R
+47,47_18064_Left_Calcarine,CAL_L,Visual network,CAL_L,Calcarine_L
+48,48_14888_Right_Calcarine,CAL_R,Visual network,CAL_R,Calcarine_R
+49,49_12168_Left_Cuneus,CUN_L,Visual network,CUN_L,Cuneus_L
+50,50_11392_Right_Cuneus,CUN_R,Visual network,CUN_R,Cuneus_R
+51,51_16760_Left_Lingual,LING_L,Visual network,LING_L,Lingual_L
+52,52_18400_Right_Lingual,LING_R,Visual network,LING_R,Lingual_R
+53,53_10928_Left_Occipital_Superior,SOG_L,Visual network,SOG_L,Occipital_Sup_L
+54,54_11304_Right_Occipital_Superior,SOG_R,Visual network,SOG_R,Occipital_Sup_R
+55,55_26120_Left_Occipital_Middle,MOG_L,Visual network,MOG_L,Occipital_Mid_L
+56,56_16784_Right_Occipital_Middle,MOG_R,Visual network,MOG_R,Occipital_Mid_R
+57,57_7528_Left_Occipital_Inferior,IOG_L,Visual network,IOG_L,Occipital_Inf_L
+58,58_7912_Right_Occipital_Inferior,IOG_R,Visual network,IOG_R,Occipital_Inf_R
+59,59_18472_Left_Fusiform,FUS_L,Visual network,FUS_L,Fusiform_L
+60,60_20144_Right_Fusiform,FUS_R,Visual network,FUS_R,Fusiform_R
+61,61_31136_Left_Poscentral,PoCG_L,Sensorimotor network,PoCG_L,Postcentral_L
+62,62_30584_Right_Postecentral,PoCG_R,Sensorimotor network,PoCG_R,Postcentral_R
+63,63_16520_Left_Parietal_Superior,SPG_L,Dorsal attention network,SPG_L,Parietal_Sup_L
+64,64_17776_Right_Parietal_Superior,SPG_R,Dorsal attention network,SPG_R,Parietal_Sup_R
+65,65_19576_Left_Parietal_Inferior,IPL_L,Dorsal attention network,IPL_L,Parietal_Inf_L
+66,66_10760_Right_Parietal_Inferior,IPL_R,Dorsal attention network,IPL_R,Parietal_Inf_R
+67,67_10048_Left_Supra_Marginal_,SMG_L,Ventral attention network,SMG_L,SupraMarginal_L
+68,68_15792_Right_Supra_Marginal,SMG_R,Ventral attention network,SMG_R,SupraMarginal_R
+69,69_9384_Left_Angular,ANG_L,Language network,ANG_L,Angular_L
+70,70_14016_Right_Angular,ANG_R,Language network,ANG_R,Angular_R
+71,71_28224_Left_Precuneus,PCUN_L,Default mode network,PCUN_L,Precuneus_L
+72,72_26120_Right_Precuneus,PCUN_R,Default mode network,PCUN_R,Precuneus_R
+73,73_10792_Left_Paracentral_Lobule,PaCL_L,Sensorimotor network,PaCL_L,Paracentral_Lobule_L
+74,74_6688_Right_Paracentral_Lobule,PaCL_R,Sensorimotor network,PaCL_R,Paracentral_Lobule_R
+75,75_6440_Left_Caudate,CAU_L,Basal ganglia network,CAU_L,Caudate_L
+76,76_6888_Right_Caudate,CAU_R,Basal ganglia network,CAU_R,Caudate_R
+77,77_7992_Left_Putamen,PUT_L,Basal ganglia network,PUT_L,Putamen_L
+78,78_8496_Right_Putamen,PUT_R,Basal ganglia network,PUT_R,Putamen_R
+79,79_2344_Left_Pallidum,PAL_L,Basal ganglia network,PAL_L,Pallidum_L
+80,80_2240_Right_Pallidum,PAL_R,Basal ganglia network,PAL_R,Pallidum_R
+81,81_0_Left_Thalamus,THA_L,none,THA_L,none
+82,82_0_Right_Thalamus,THA_R,none,THA_R,none
+83,83_1800_Left_Heschl,HES_L,Auditory network,HES_L,Heschl_L
+84,84_1992_Right_Heschl,HES_R,Auditory network,HES_R,Heschl_R
+85,85_18368_Left_Temporal_Superior,STG_L,Language network,STG_L,Temporal_Sup_L
+86,86_25128_Right_Temporal_Superior,STG_R,Language network,STG_R,Temporal_Sup_R
+87,87_10280_Left_Temporal_Pole_Superior,TPsup_L,Limbic/Paralimbic network,TPsup_L,Temporal_Pole_Sup_L
+88,88_10704_Right_Temporal_Pole_Superior,TPsup_R,Limbic/Paralimbic network,TPsup_R,Temporal_Pole_Sup_R
+89,89_39536_Left_Temporal_Middle,MTG_L,Language network,MTG_L,Temporal_Mid_L
+90,90_35272_Right_Temporal_Middle,MTG_R,Language network,MTG_R,Temporal_Mid_R
+91,91_6040_Left_Temporal_Middle,MTGp_L,Limbic/Paralimbic network,MTGp_L,Temporal_Pole_Mid_L
+92,92_9496_Right_Temporal_Middle,MTGp_R,Limbic/Paralimbic network,MTGp_R,Temporal_Pole_Mid_R
+93,93_25600_Left_Temporal_Inferior,ITG_L,Language network,ITG_L,Temporal_Inf_L
+94,94_28456_Left_Temporal_Inferior,ITG_R,Language network,ITG_R,Temporal_Inf_R
+95,95_20824_Left_Cerebellum_Crus_1,Crus1_L,Cerebellum,Crus1_L,Cerebellum_Crus1_L
+96,96_21184_Right_Cerebellum_Crus_1,Crus1_R,Cerebellum,Crus1_R,Cerebellum_Crus1_R
+97,97_14920_Left_Cerebellum_Crus_2,Crus2_L,Cerebellum,Crus2_L,Cerebellum_Crus2_L
+98,98_16536_Right_Cerebellum_Crus_2,Crus2_R,Cerebellum,Crus2_R,Cerebellum_Crus2_R
+99,99_1088_Left_Cerebellum_3,CER3_L,Cerebellum,CER3_L,Cerebellum_3_L
+100,100_1656_Right_Cerebellum_3,CER3_R,Cerebellum,CER3_R,Cerebellum_3_R
+101,"101_9000_Left_Cerebellum_4,_5",CER45_L,Cerebellum,CER45_L,Cerebellum_4_5_L
+102,"102_6888_Right_Cerebellum_4,_5",CER45_R,Cerebellum,CER45_R,Cerebellum_4_5_R
+103,103_13552_Left_Cerebellum_6,CER6_L,Cerebellum,CER6_L,Cerebellum_6_L
+104,104_14360_Right_Cerebellum_6,CER6_R,Cerebellum,CER6_R,Cerebellum_6_R
+105,105_3536_Left_Cerebellum_7b,CER7b_L,Cerebellum,CER7b_L,Cerebellum_7b_L
+106,106_2408_Right_Cerebellum_7b,CER7b_R,Cerebellum,CER7b_R,Cerebellum_7b_R
+107,107_8816_Left_Cerebellum_8,CER8_L,Cerebellum,CER8_L,Cerebellum_8_L
+108,108_8776_Right_Cerebellum_8,CER8_R,Cerebellum,CER8_R,Cerebellum_8_R
+109,109_4720_Left_Cerebellum_9,CER9_L,Cerebellum,CER9_L,Cerebellum_9_L
+110,110_4376_Right_Cerebellum_9,CER9_R,Cerebellum,CER9_R,Cerebellum_9_R
+111,111_1152_Left_Cerebellum_10,CER10_L,Cerebellum,CER10_L,Cerebellum_10_L
+112,112_1272_Right_Cerebellum_10,CER10_R,Cerebellum,CER10_R,Cerebellum_10_R
+113,113_416_Vermis_1_2,VERM1_2,Cerebellum,VERM1_2,Vermis_1_2
+114,114_1824_Vermis_3,VERM3,Cerebellum,VERM3,Vermis_3
+115,"115_5320_Vermis_4,_5",VERM4_5,Cerebellum,VERM4_5,Vermis_4_5
+116,116_2968_Vermis_6,VERM6,Cerebellum,VERM6,Vermis_6
+117,117_1552_Vermis_7,VERM7,Cerebellum,VERM7,Vermis_7
+118,118_1944_Vermis_8,VERM8,Cerebellum,VERM8,Vermis_8
+119,119_1392_Vermis_9,VERM9,Cerebellum,VERM9,Vermis_9
+120,120_896_Vermis_10,VERM10,Cerebellum,VERM10,Vermis_10
+121,121_144_Left_Thalamus_Anteroventral,ThAV_L,Thalamus,ThAV_L,Thal_AV_L
+122,122_184_Right_Thalamus_Anteroventral,ThAV_R,Thalamus,ThAV_R,Thal_AV_R
+123,123_192_Left_Thalamus_Lateral_Posterior,ThLP_L,Thalamus,ThLP_L,Thal_LP_L
+124,124_176_Right_Thalamus_Lateral_Posterior,ThLP_R,Thalamus,ThLP_R,Thal_LP_R
+125,125_656_Left_Thalamus_Ventral_Anterior,ThVA_L,Thalamus,ThVA_L,Thal_VA_L
+126,126_656_Right_Thalamus_Ventral_Anterior,ThVA_R,Thalamus,ThVA_R,Thal_VA_R
+127,127_2112_Left_Thalamus_Ventrolateral,ThVL_L,Thalamus,ThVL_L,Thal_VL_L
+128,128_1992_Right_Thalamus_Ventrolateral,ThVL_R,Thalamus,ThVL_R,Thal_VL_R
+129,129_1360_Left_Thalamus_Ventral_Posterolateral,ThVPL_L,Thalamus,ThVPL_L,Thal_VPL_L
+130,130_1344_Right_Thalamus_Ventral_Posterolateral,ThVPL_R,Thalamus,ThVPL_R,Thal_VPL_R
+131,131_400_Left_Thalamus_Intralaminar,ThIL_L,Thalamus,ThIL_L,Thal_IL_L
+132,132_432_Right_Thalamus_Intralaminar,ThIL_R,Thalamus,ThIL_R,Thal_IL_R
+133,133_0_Left_Thalamus_Reticular,ThRE_L,Thalamus,ThRE_L,Thal_Re_L
+134,134_8_Right_Thalamus_Reticular,ThRE_R,Thalamus,ThRE_R,Thal_Re_R
+135,135_976_Left_Thalamus_Mediodorsal_Medial,ThMDm_L,Thalamus,ThMDm_L,Thal_MDm_L
+136,136_992_Right_Thalamus_Mediodorsal_Medial,ThMDm_R,Thalamus,ThMDm_R,Thal_MDm_R
+137,137_320_Left_Thalamus_Mediodorsal_Lateral,ThMDl_L,Thalamus,ThMDl_L,Thal_MDl_L
+138,138_272_Right_Thalamus_Mediodorsal_Lateral,ThMDl_R,Thalamus,ThMDl_R,Thal_MDl_R
+139,139_296_Left_Thalamus_Lateral_Group_Nuclear,ThLGN_L,Thalamus,ThLGN_L,Thal_LGN_L
+140,140_344_Right_Thalamus_Lateral_Group_Nuclear,ThLGN_R,Thalamus,ThLGN_R,Thal_LGN_R
+141,141_112_Left_Thalamus_Midline_Group_Nuclear,ThML_L,Thalamus,ThML_L,Thal_MGN_L
+142,142_144_Right_Thalamus_Midline_Group_Nuclear,ThML_R,Thalamus,ThML_R,Thal_MGN_R
+143,143_248_Left_Thalamus_Pulvinar_Nucleus_Inferior,ThPI_L,Thalamus,ThPI_L,Thal_PuI_L
+144,144_224_Right_Thalamus_Pulvinar_Nucleus_Inferior,ThPI_R,Thalamus,ThPI_R,Thal_PuI_R
+145,145_1424_Left_Thalamus_Pulvinar_Nucleus_Medial,ThPM_L,Thalamus,ThPM_L,Thal_PuM_L
+146,146_1496_Right_Thalamus_Pulvinar_Nucleus_Medial,ThPM_R,Thalamus,ThPM_R,Thal_PuM_R
+147,147_288_Left_Thalamus_Pulvinar_Nucleus_Anterior,ThPA_L,Thalamus,ThPA_L,Thal_PuA_L
+148,148_248_Right_Thalamus_Pulvinar_Nucleus_Anterior,ThPA_R,Thalamus,ThPA_R,Thal_PuA_R
+149,149_184_Left_Thalamus_Pulvinar_Nucleus_Lateral,ThPL_L,Thalamus,ThPL_L,Thal_PuL_L
+150,150_192_Right_Thalamus_Pulvinar_Nucleus_Lateral,ThPL_R,Thalamus,ThPL_R,Thal_PuL_R
+151,151_1344_Left_Anterior_Cingulate_Cortex_Subgenual,ACCsub_L,Default mode network,ACCsub_L,ACC_sub_L
+152,152_1056_Right_Anterior_Cingulate_Cortex_Subgenual,ACCsub_R,Default mode network,ACCsub_R,ACC_sub_R
+153,153_5016_Left_Anterior_Cingulate_Cortex_Pregenual,ACCpre_L,Default mode network,ACCpre_L,ACC_pre_L
+154,154_5184_Right_Anterior_Cingulate_Cortex_Pregenual,ACCpre_R,Default mode network,ACCpre_R,ACC_pre_R
+155,155_4840_Right_Anterior_Cingulate_Cortex_Superior,ACCsup_L,Salience network,ACCsup_L,ACC_sup_L
+156,156_4264_Right_Anterior_Cingulate_Cortex_Superior,ACCsup_R,Salience network,ACCsup_R,ACC_sup_R
+157,157_1304_Left_Nucleus_Accumbens,NACC_L,Basal ganglia network,NACC_L,N_Acc_L
+158,158_1144_Right_Nucleus_Accumbens,NACC_R,Basal ganglia network,NACC_R,N_Acc_R
+159,159_80_Left_Ventral_Tegmental_Area,VTA_L,Brain stem,VTA_L,VTA_L
+160,160_72_Right_Tegmental_Area,VTA_R,Brain stem,VTA_R,VTA_R
+161,161_256_Left_Substancia_Nigra_Pars_Compacta,SNc_L,Brain stem,SNc_L,SN_pc_L
+162,162_264_Right_Substantia_Nigra_Pars_Compacta,SNc_R,Brain stem,SNc_R,SN_pc_R
+163,163_424_Left_Substantia_Nigra_Pars_Reticulata,SNr_L,Brain stem,SNr_L,SN_pr_L
+164,164_480_Right_Substantia_Nigra_Pars_Reticulata,SNr_R,Brain stem,SNr_R,SN_pr_R
+165,165_456_Left_Red_Nucleus,RN_L,Brain stem,RN_L,Red_N_L
+166,166_464_Right_Red_Nucleus,RN_R,Brain stem,RN_R,Red_N_R
+167,167_24_Locus_Coeruleus,LC_L,Brain stem,LC_L,LC_L
+168,168_40_Locus_Coeruleus,LC_R,Brain stem,LC_R,LC_R
+169,169_144_Raphe_Dorsal,RapheD,Brain stem,RapheD,Raphe_D
+170,170_48_Raphe_Median,RapheM,Brain stem,RapheM,Raphe_M

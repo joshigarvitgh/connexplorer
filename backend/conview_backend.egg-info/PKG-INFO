@@ -1,0 +1,15 @@
+Metadata-Version: 2.1
+Name: conview-backend
+Version: 0.2
+Summary: A specialized nifti viewer
+Home-page: knorrfg.github.io
+Author: Felix Knorr
+Author-email: knorr.felix@gmx.de
+License: MIT
+Requires-Dist: numpy
+Requires-Dist: nibabel
+Requires-Dist: pytest
+Requires-Dist: nilearn
+Requires-Dist: click
+Requires-Dist: pyparadigm>=1.0.10
+Requires-Dist: matplotlib

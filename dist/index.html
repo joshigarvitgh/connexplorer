@@ -1,0 +1,761 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Elm + Websockets</title>
+  <script type="text/javascript" src="elm.js?v=cachebust-2"></script>
+  <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --panel: #f8fafc;
+      --text: #1f2430;
+      --accent: #2d6cdf;
+      --accent-strong: #1c4c9b;
+    }
+
+    @font-face {
+      font-family: 'Open Sans';
+      src: url(opensans.ttf);
+    }
+
+    body {
+      font-family: 'Open Sans', 'Arial', sans-serif;
+      font-size: clamp(15px, 0.95rem + 0.2vw, 18px);
+      line-height: 1.6;
+      background: #ffffff;
+      color: var(--text);
+      margin: 0;
+      padding: 0;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow-x: hidden;
+    }
+
+    /* Force the main shell to be full-height without extra margin/padding/borders */
+    body > div > div:nth-child(2) {
+      margin-top: 28px !important;
+      padding: 0 !important;
+      flex: 1 1 auto;
+      width: 100%;
+      height: auto !important;
+      min-height: 100vh !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      border: none !important;
+      overflow: visible;
+    }
+
+    @media (max-width: 900px) {
+      body > div > div:nth-child(2) {
+        margin-top: 40px !important;
+      }
+    }
+
+    img, canvas, svg {
+      max-width: 100%;
+      height: auto;
+    }
+
+    button, select, input[type="radio"] + label {
+      color: var(--text);
+    }
+
+    button {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: clamp(8px, 0.4rem + 0.2vw, 12px) clamp(10px, 0.6rem + 0.4vw, 16px);
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    button:hover {
+      background: var(--accent-strong);
+    }
+
+    #myapp {
+      min-height: 100vh;
+    }
+
+    #figure-shell {
+      width: 100%;
+      max-width: min(100vw, 2400px);
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: clamp(6px, 0.6vw, 10px);
+      padding: clamp(4px, 0.4vw, 10px);
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    #figure-row {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: clamp(6px, 0.6vw, 10px);
+      width: 100%;
+      align-items: stretch;
+      overflow: visible;
+    }
+
+    #brain-panel,
+    #matrix-panel {
+      min-width: 0;
+    }
+
+    #brain-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      background: transparent;
+      padding: 0;
+      margin-left: clamp(-12px, -1vw, 0px);
+      width: 100%;
+    }
+
+    #matrix-panel {
+      background: transparent;
+      padding: 0;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    #matrix-plot {
+      background: var(--panel);
+      width: 100%;
+      min-height: clamp(240px, 28vh, 420px);
+      height: clamp(320px, 38vh, 520px);
+      max-height: 70vh;
+    }
+
+    @media (min-width: 601px) and (max-width: 1024px) {
+      #figure-shell {
+        max-width: clamp(960px, 94vw, 1100px);
+      }
+      #matrix-plot {
+        height: clamp(320px, 44vh, 560px);
+      }
+    }
+
+    @media (min-width: 1025px) {
+      #figure-row {
+        grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+      }
+      #matrix-plot {
+        height: clamp(340px, 36vh, 600px);
+      }
+    }
+
+    @media (min-width: 1600px) {
+      #figure-shell {
+        max-width: min(96vw, 2300px);
+      }
+      #figure-row {
+        grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+      }
+    }
+
+    @media (min-width: 1920px) {
+      #figure-shell {
+        max-width: min(94vw, 2400px);
+      }
+      #figure-row {
+        grid-template-columns: minmax(0, 1.12fr) minmax(0, 0.88fr);
+      }
+      #matrix-plot {
+        height: clamp(360px, 32vh, 620px);
+      }
+    }
+
+    @media (max-width: 600px) {
+      #figure-shell {
+        padding: 12px;
+      }
+      #matrix-plot {
+        height: clamp(280px, 50vh, 520px);
+      }
+      button {
+        width: auto;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="myapp"></div>
+</body>
+
+<script type="text/javascript">
+
+  // Start the Elm application.
+  var app = Elm.Main.init({
+    node: document.getElementById('myapp')
+  });
+
+  // Create your WebSocket with a small send queue so we don't drop the first init message.
+  var socket = new WebSocket('ws://localhost:8001');
+  var socketOpen = false;
+  var socketQueue = [];
+
+  socket.addEventListener('open', function () {
+    socketOpen = true;
+    while (socketQueue.length) {
+      socket.send(socketQueue.shift());
+    }
+  });
+
+  socket.addEventListener('close', function () {
+    socketOpen = false;
+  });
+
+  function sendWs(message) {
+    if (socketOpen && socket.readyState === WebSocket.OPEN) {
+      socket.send(message);
+    } else {
+      socketQueue.push(message);
+    }
+  }
+
+  // When a command goes to the `sendMessage` port, we pass the message
+  // along to the WebSocket.
+  app.ports.sendMessage.subscribe(function (message) {
+    sendWs(message);
+  });
+
+  // When a message comes into our WebSocket, we pass the message along
+  // to the `messageReceiver` port.
+  socket.addEventListener("message", function (event) {
+    app.ports.messageReceiver.send(event.data);
+  });
+
+  function cmapForPlotly(name) {
+    // Allowed Plotly colorscales (case-insensitive)
+    var allowed = {
+      viridis: 'Viridis',
+      plasma: 'Plasma',
+      inferno: 'Inferno',
+      magma: 'Magma',
+      cividis: 'Cividis',
+      turbo: 'Turbo',
+      rdylbu: 'RdYlBu',
+      rdbu: 'RdBu',
+      spectral: 'Spectral',
+      brbg: 'BrBG',
+      puor: 'PuOr',
+      blues: 'Blues',
+      greens: 'Greens',
+      greys: 'Greys',
+      greyscale: 'Greys',
+      gray: 'Greys',
+      greys_r: 'Greys',
+      reds: 'Reds',
+      oranges: 'Oranges',
+      purples: 'Purples',
+      picnic: 'Picnic',
+      portland: 'Portland',
+      jet: 'Jet',
+      hot: 'Hot',
+      earth: 'Earth',
+      electric: 'Electric',
+      blackbody: 'Blackbody',
+      rainbow: 'Rainbow',
+      coolwarm: 'RdBu'
+    };
+
+    var custom = {
+      set1: [
+        [0, '#e41a1c'], [0.14, '#377eb8'], [0.28, '#4daf4a'], [0.42, '#984ea3'],
+        [0.56, '#ff7f00'], [0.7, '#ffff33'], [0.84, '#a65628'], [1, '#f781bf']
+      ],
+      set2: [
+        [0, '#66c2a5'], [0.17, '#fc8d62'], [0.33, '#8da0cb'], [0.5, '#e78ac3'],
+        [0.67, '#a6d854'], [0.83, '#ffd92f'], [1, '#e5c494']
+      ],
+      dark2: [
+        [0, '#1b9e77'], [0.2, '#d95f02'], [0.4, '#7570b3'], [0.6, '#e7298a'],
+        [0.8, '#66a61e'], [1, '#e6ab02']
+      ]
+    };
+
+    if (!name) return 'Viridis';
+    var key = String(name).toLowerCase();
+    if (allowed[key]) return allowed[key];
+    if (custom[key]) return custom[key];
+    return 'Viridis';
+  }
+
+  // Keep the last payload so we can retry rendering after the DOM is ready
+  var lastMatrixPayload = null;
+
+  function renderMatrixPayload(payload) {
+    var targetId = payload.targetId || 'matrix-plot';
+    var target = document.getElementById(targetId);
+    if (!target || typeof Plotly === 'undefined') {
+      lastMatrixPayload = payload;
+      // Retry shortly after Elm has had a chance to render the DOM node
+      setTimeout(function () {
+        if (lastMatrixPayload) {
+          renderMatrixPayload(lastMatrixPayload);
+        }
+      }, 50);
+      return;
+    }
+
+    lastMatrixPayload = null;
+
+    console.log('renderMatrix payload', {
+      axis: payload.axis,
+      rows: (payload.values || []).length,
+      cols: (payload.values && payload.values[0] ? payload.values[0].length : 0),
+      xLabels: (payload.xLabels || []).length,
+      yLabels: (payload.yLabels || []).length,
+      cmap: payload.cmap,
+      colorscale: cmapForPlotly(payload.cmap)
+    });
+
+    var zmin = (payload.vrange && payload.vrange.low !== null) ? payload.vrange.low : undefined;
+   var zmax = (payload.vrange && payload.vrange.high !== null) ? payload.vrange.high : undefined;
+    var showLabels = payload.showLabels !== false;
+    var isRegion = payload.axis === 'regions';
+    var isNetwork = payload.axis === 'networks';
+    var showRegionLabels = showLabels && payload.showRegionLabels !== false && isRegion;
+    var showNetLabels = showLabels && payload.showNetworkLabels !== false && isNetwork;
+    var xFocusStart = payload.xFocusStart;
+    var xFocusEnd = payload.xFocusEnd;
+    var yFocusStart = payload.yFocusStart;
+    var yFocusEnd = payload.yFocusEnd;
+
+    var values = payload.values || [];
+    var cols = values[0] ? values[0].length : 0;
+    var rows = values.length;
+    if (!rows || !cols) {
+      return;
+    }
+
+    // Use ND labels (xShortLabels/yShortLabels carry nd_region), fall back to ids
+    var xShortRaw = (payload.xShortLabels && payload.xShortLabels.length) ? payload.xShortLabels : null;
+    var yShortRaw = (payload.yShortLabels && payload.yShortLabels.length) ? payload.yShortLabels : null;
+    var xLabelsAll = xShortRaw ? payload.xShortLabels : (payload.xIds || []).map(function (id, idx) { return id + ''; });
+    var yLabelsAll = yShortRaw ? payload.yShortLabels : (payload.yIds || []).map(function (id, idx) { return id + ''; });
+
+    var xLabels = (showLabels && showRegionLabels) ? xLabelsAll : [];
+    var yLabels = (showLabels && showRegionLabels) ? yLabelsAll : [];
+
+    var hoverX = (payload.xLabels && payload.xLabels.length) ? payload.xLabels : xLabelsAll;
+    var hoverY = (payload.yLabels && payload.yLabels.length) ? payload.yLabels : yLabelsAll;
+    var xVals = Array.from({ length: cols }, function (_v, idx) { return idx; });
+    var yVals = Array.from({ length: rows }, function (_v, idx) { return idx; });
+
+    var netLabelsRawX = (payload.net_labels && payload.net_labels.length) ? payload.net_labels : [];
+    var netLabelsFullRawX = (payload.net_labels_full && payload.net_labels_full.length) ? payload.net_labels_full : [];
+    var netLabelsRawY = (payload.net_labels_y && payload.net_labels_y.length) ? payload.net_labels_y : netLabelsRawX;
+    var netLabelsFullRawY = (payload.net_labels_full_y && payload.net_labels_full_y.length) ? payload.net_labels_full_y : netLabelsFullRawX;
+    var netLabelsX = netLabelsRawX.length ? netLabelsRawX : xVals.map(function (i) { return i; });
+    var netLabelsY = netLabelsRawY.length ? netLabelsRawY : yVals.map(function (i) { return i; });
+    var netLabelsFullX = netLabelsFullRawX.length ? netLabelsFullRawX : netLabelsX;
+    var netLabelsFullY = netLabelsFullRawY.length ? netLabelsFullRawY : netLabelsY;
+    var xCenters = payload.x_centers || [];
+    var yCenters = payload.y_centers || [];
+    var xNets = payload.x_nets || [];
+    var yNets = payload.y_nets || [];
+    var xNetsFull = payload.x_nets_full || [];
+    var yNetsFull = payload.y_nets_full || [];
+    var showNetTicks = false;
+    console.log("Frontend net_labels X:", netLabelsX);
+    console.log("Frontend net_labels Y:", netLabelsY);
+    console.log("Frontend net_boundaries:", payload.net_boundaries);
+    console.log("Frontend net_boundaries_y:", payload.net_boundaries_y);
+    console.log('Frontend net_labels raw X:', netLabelsRawX);
+    console.log('Frontend net_labels raw Y:', netLabelsRawY);
+
+    var rawValues = (payload.raw_values && payload.raw_values.length) ? payload.raw_values : values;
+    var customdata = values.map(function (row, rowIdx) {
+      return row.map(function (_v, colIdx) {
+        var xLabelVal = isNetwork
+          ? (netLabelsX[colIdx] || colIdx)
+          : (hoverX[colIdx] || xLabels[colIdx] || colIdx);
+        var yLabelVal = isNetwork
+          ? (netLabelsY[rowIdx] || rowIdx)
+          : (hoverY[rowIdx] || yLabels[rowIdx] || rowIdx);
+        var xNetFull = isNetwork ? (netLabelsFullX[colIdx] || netLabelsX[colIdx] || colIdx) : (xNetsFull[colIdx] || netLabelsFullX[colIdx] || netLabelsX[colIdx] || '');
+        var yNetFull = isNetwork ? (netLabelsFullY[rowIdx] || netLabelsY[rowIdx] || rowIdx) : (yNetsFull[rowIdx] || netLabelsFullY[rowIdx] || netLabelsY[rowIdx] || '');
+        var rawValue = rawValues[rowIdx] && rawValues[rowIdx][colIdx];
+        var cellValue =
+          rawValue !== undefined && rawValue !== null
+            ? rawValue
+            : _v;
+        return {
+          xLabel: xLabelVal,
+          yLabel: yLabelVal,
+          xNet: xNetFull,
+          yNet: yNetFull,
+          value: cellValue
+        };
+      });
+    });
+
+    var selectedRowId = payload.selectedRowId;
+    var selectedColId = payload.selectedColId;
+    var xIdMap = payload.xIds || [];
+    var yIdMap = payload.yIds || [];
+
+    function axisIndexFromId(ids, id) {
+      var idx = ids.indexOf(id);
+      return idx >= 0 ? idx : null;
+    }
+
+    var selRowIdx = axisIndexFromId(yIdMap, selectedRowId);
+    var selColIdx = axisIndexFromId(xIdMap, selectedColId);
+
+    var data = [{
+      z: values,
+      type: 'heatmap',
+      colorscale: cmapForPlotly(payload.cmap),
+      zmin: zmin,
+      zmax: zmax,
+      hovertemplate: 'X region: %{customdata.xLabel} (%{customdata.xNet})<br>Y region: %{customdata.yLabel} (%{customdata.yNet})<br>Value: %{customdata.value}<extra></extra>',
+      x: xVals,
+      y: yVals,
+      xgap: 1,
+      ygap: 1,
+      showscale: false,
+      customdata: customdata
+    }];
+
+    var shapes = [];
+    if (selRowIdx !== null) {
+      shapes.push({
+        type: 'rect',
+        xref: 'paper',
+        yref: 'y',
+        x0: 0,
+        x1: 1,
+        y0: selRowIdx - 0.5,
+        y1: selRowIdx + 0.5,
+        line: { color: '#BC1589', width: 2 },
+        fillcolor: 'rgba(188,21,137,0.12)',
+        layer: 'above'
+      });
+    }
+    if (selColIdx !== null) {
+      shapes.push({
+        type: 'rect',
+        xref: 'x',
+        yref: 'paper',
+        x0: selColIdx - 0.5,
+        x1: selColIdx + 0.5,
+        y0: 0,
+        y1: 1,
+        line: { color: '#BC1589', width: 2 },
+        fillcolor: 'rgba(188,21,137,0.12)',
+        layer: 'above'
+      });
+    }
+
+    var netBoundsX = (payload.net_boundaries && payload.net_boundaries.length) ? payload.net_boundaries.slice() : [];
+    var netBoundsY = (payload.net_boundaries_y && payload.net_boundaries_y.length) ? payload.net_boundaries_y.slice() : null;
+    if (payload.xdlim && payload.xdlim.length) {
+      netBoundsX = [0].concat(payload.xdlim.map(function (v) { return Number(v); }));
+    }
+    if (!netBoundsY) {
+      netBoundsY = netBoundsX.slice();
+    }
+    if (netBoundsX.length && netBoundsX[netBoundsX.length - 1] !== cols) {
+      netBoundsX = netBoundsX.concat([cols]);
+    }
+    if (netBoundsY.length && netBoundsY[netBoundsY.length - 1] !== rows) {
+      netBoundsY = netBoundsY.concat([rows]);
+    }
+    if (!netBoundsX.length) netBoundsX = [0, cols];
+    if (!netBoundsY.length) netBoundsY = [0, rows];
+
+    var showNetBounds = payload.showNetBoundaries !== false;
+    function centerPoints(bounds) {
+      if (!bounds || bounds.length < 2) return [];
+      var res = [];
+      for (var i = 0; i < bounds.length - 1; i++) {
+        res.push(bounds[i] + (bounds[i + 1] - bounds[i]) / 2 - 0.5);
+      }
+      return res;
+    }
+    var netCentersX = centerPoints(netBoundsX);
+    var netCentersY = centerPoints(netBoundsY);
+    if (isRegion && showNetBounds && netBoundsX.length > 1) {
+      for (var i = 1; i < netBoundsX.length; i++) {
+        var bx = netBoundsX[i];
+        var by = netBoundsY[i] !== undefined ? netBoundsY[i] : bx;
+        var bxPos = bx - 0.5;
+        var byPos = by - 0.5;
+        shapes.push({
+          type: 'line',
+          xref: 'x',
+          yref: 'paper',
+          x0: bxPos,
+          x1: bxPos,
+          y0: 0,
+          y1: 1,
+          line: { color: '#4b5563', width: 2 }
+        });
+        shapes.push({
+          type: 'line',
+          xref: 'paper',
+          yref: 'y',
+          x0: 0,
+          x1: 1,
+          y0: byPos,
+          y1: byPos,
+          line: { color: '#4b5563', width: 2 }
+        });
+      }
+    }
+    var netLabelSourceX = (payload.net_labels && payload.net_labels.length) ? payload.net_labels : netLabelsX;
+    var netLabelSourceY = (payload.net_labels_y && payload.net_labels_y.length) ? payload.net_labels_y : netLabelsY;
+    var labelSourceX = (payload.xlabel && payload.xlabel.length) ? payload.xlabel : netLabelSourceX;
+    var labelSourceY = (payload.ylabel && payload.ylabel.length) ? payload.ylabel : netLabelSourceY;
+    var showOverlayTitles = payload.showOverlayTitles === true && netBoundsX.length > 1 && netLabelSourceX.length;
+    var overlayTitleAnnotations = [];
+    if (showOverlayTitles) {
+      var segmentCount = Math.min(netLabelSourceX.length, netBoundsX.length - 1);
+      for (var j = 0; j < segmentCount; j++) {
+        var start = netBoundsX[j];
+        var end = netBoundsX[j + 1];
+        var midX = start + (end - start) / 2 - 1.5;
+        var label = labelSourceX[j] || netLabelSourceX[j];
+        overlayTitleAnnotations.push({
+          x: midX,
+          y: 1.01,
+          xref: 'x',
+          yref: 'paper',
+          text: label,
+          showarrow: false,
+          font: { size: 12, color: '#0f172a', family: 'Open Sans, Arial, sans-serif', weight: 'bold' },
+          bgcolor: 'rgba(255,255,255,0.0)',
+          bordercolor: 'rgba(0,0,0,0)',
+          borderpad: 2,
+          borderwidth: 0,
+          yanchor: 'bottom',
+          cliponaxis: false
+        });
+      }
+      for (var k = 0; k < Math.min(netLabelSourceY.length, netBoundsY.length - 1); k++) {
+        var startY = netBoundsY[k];
+        var endY = netBoundsY[k + 1] !== undefined ? netBoundsY[k + 1] : netBoundsX[k + 1];
+        var midY = startY + (endY - startY) / 2 - 0.5;
+        var labelY = labelSourceY[k] || netLabelSourceY[k] || '';
+        overlayTitleAnnotations.push({
+          x: 1.01,
+          y: midY,
+          xref: 'paper',
+          yref: 'y',
+          text: labelY,
+          showarrow: false,
+          font: { size: 12, color: '#0f172a', family: 'Open Sans, Arial, sans-serif', weight: 'bold' },
+          bgcolor: 'rgba(255,255,255,0.0)',
+          bordercolor: 'rgba(0,0,0,0)',
+          borderpad: 2,
+          borderwidth: 0,
+          xanchor: 'left',
+          cliponaxis: false
+        });
+      }
+    }
+    var tickXVals = xVals;
+    var tickYVals = yVals;
+    var hasNetTicksX = netLabelsX.length && netCentersX.length && showNetLabels;
+    var hasNetTicksY = netLabelsY.length && netCentersY.length && showNetLabels;
+    var tickX = (isNetwork || hasNetTicksX) ? netLabelsX : ((payload.xShortLabels && payload.xShortLabels.length) ? payload.xShortLabels : xLabels);
+    var tickY = (isNetwork || hasNetTicksY) ? netLabelsY : ((payload.yShortLabels && payload.yShortLabels.length) ? payload.yShortLabels : yLabels);
+    var tickXVals = (isNetwork || hasNetTicksX) ? netCentersX : xVals;
+    var tickYVals = (isNetwork || hasNetTicksY) ? netCentersY : yVals;
+
+    var annotations = overlayTitleAnnotations;
+
+    var topMargin = overlayTitleAnnotations.length ? 48 : 20;
+    var horizMargin = Math.max(12, Math.min(44, Math.round(window.innerWidth * 0.02)));
+    var bottomMargin = Math.max(40, Math.min(72, Math.round(window.innerHeight * 0.05)));
+    var uirev = payload.uirevision || "matrix";
+
+    var xRange = (xFocusStart >= 0 && xFocusEnd >= 0)
+      ? [xFocusStart - 0.5, xFocusEnd - 0.5]
+      : (showOverlayTitles ? [-0.5, cols + 0.5] : undefined);
+    var yRange = (yFocusStart >= 0 && yFocusEnd >= 0)
+      ? [yFocusStart - 0.5, yFocusEnd - 0.5]
+      : undefined;
+
+    var minSpanX = Math.max(1, Math.min(cols, Math.ceil(cols * 0.05)));
+    var minSpanY = Math.max(1, Math.min(rows, Math.ceil(rows * 0.05)));
+    var clampRelayout = false;
+
+    function clampRange(lo, hi, minSpan, minBound, maxBound) {
+      var span = hi - lo;
+      if (span < minSpan) {
+        hi = lo + minSpan;
+      }
+      if (lo < minBound) {
+        hi += (minBound - lo);
+        lo = minBound;
+      }
+      if (hi > maxBound) {
+        var delta = hi - maxBound;
+        lo -= delta;
+        hi -= delta;
+      }
+      lo = Math.max(minBound, lo);
+      hi = Math.min(maxBound, hi);
+      return [lo, hi];
+    }
+
+    function handleRelayout(ev) {
+      if (!ev || clampRelayout || typeof Plotly === 'undefined') return;
+      var update = {};
+      var changed = false;
+
+      if (ev['xaxis.range[0]'] !== undefined && ev['xaxis.range[1]'] !== undefined) {
+        var xr = clampRange(parseFloat(ev['xaxis.range[0]']), parseFloat(ev['xaxis.range[1]']), minSpanX, -0.5, cols - 0.5);
+        update['xaxis.range'] = xr;
+        changed = true;
+      }
+      if (ev['yaxis.range[0]'] !== undefined && ev['yaxis.range[1]'] !== undefined) {
+        var yr = clampRange(parseFloat(ev['yaxis.range[0]']), parseFloat(ev['yaxis.range[1]']), minSpanY, -0.5, rows - 0.5);
+        update['yaxis.range'] = yr;
+        changed = true;
+      }
+
+      if (changed) {
+        clampRelayout = true;
+        Plotly.relayout(target, update).then(function () {
+          clampRelayout = false;
+        });
+      }
+    }
+
+    var layout = {
+      margin: { t: topMargin, r: horizMargin, b: bottomMargin, l: horizMargin },
+      title: '',
+      xaxis: {
+        title: '',
+        fixedrange: false,
+        ticktext: tickX,
+        tickvals: tickXVals,
+        tickangle: (isNetwork || hasNetTicksX) ? -30 : -55,
+        tickmode: 'array',
+        automargin: true,
+        tickfont: { size: (isNetwork || hasNetTicksX) ? 13 : 10 },
+        showticklabels: (isNetwork || hasNetTicksX) ? true : ((showRegionLabels && showLabels)),
+        ticklabelposition: 'outside',
+        range: xRange,
+        showgrid: false,
+        zeroline: false
+      },
+      yaxis: {
+        title: '',
+        fixedrange: false,
+        ticktext: tickY,
+        tickvals: tickYVals,
+        tickangle: (isNetwork || hasNetTicksY) ? -30 : 0,
+        tickmode: 'array',
+        automargin: true,
+        tickfont: { size: (isNetwork || hasNetTicksY) ? 13 : 10 },
+        showticklabels: (isNetwork || hasNetTicksY) ? true : ((showRegionLabels && showLabels)),
+        ticklabelposition: 'outside',
+        range: yRange,
+        autorange: true,
+        showgrid: false,
+        zeroline: false
+      },
+      dragmode: 'pan',
+      shapes: shapes,
+      annotations: annotations,
+      uirevision: uirev
+    };
+
+
+    function enforceTickAngles() {
+      var updates = {};
+      var changed = false;
+      if (layout && layout.xaxis) {
+        if (typeof layout.xaxis.tickangle !== 'undefined') {
+          updates['xaxis.tickangle'] = layout.xaxis.tickangle;
+          changed = true;
+        }
+        if (layout.xaxis.tickvals) {
+          updates['xaxis.tickvals'] = layout.xaxis.tickvals;
+          updates['xaxis.ticktext'] = layout.xaxis.ticktext;
+          changed = true;
+        }
+      }
+      if (layout && layout.yaxis) {
+        if (typeof layout.yaxis.tickangle !== 'undefined') {
+          updates['yaxis.tickangle'] = layout.yaxis.tickangle;
+          changed = true;
+        }
+        if (layout.yaxis.tickvals) {
+          updates['yaxis.tickvals'] = layout.yaxis.tickvals;
+          updates['yaxis.ticktext'] = layout.yaxis.ticktext;
+          changed = true;
+        }
+      }
+      if (changed) {
+        Plotly.relayout(target, updates);
+      }
+    }
+
+    Plotly.react(target, data, layout, {
+      displaylogo: false,
+      responsive: true,
+      scrollZoom: true,
+      doubleClick: 'reset'
+    }).then(enforceTickAngles);
+
+    if (target && target.removeAllListeners) {
+      target.removeAllListeners('plotly_relayout');
+    }
+    if (target && target.on) {
+      target.on('plotly_relayout', handleRelayout);
+    }
+    wireMatrixClick(target);
+  }
+
+  if (app.ports.renderMatrix) {
+    app.ports.renderMatrix.subscribe(function (payload) {
+      renderMatrixPayload(payload);
+    });
+  }
+
+  // Send matrix clicks back to Elm to sync the brain views
+  function wireMatrixClick(target) {
+    if (!target || typeof Plotly === 'undefined' || !app.ports.matrixClicked) {
+      return;
+    }
+    target.on('plotly_click', function (eventData) {
+      if (!eventData || !eventData.points || !eventData.points.length) return;
+      var pt = eventData.points[0];
+      app.ports.matrixClicked.send({ row: pt.y, col: pt.x });
+    });
+  }
+
+
+  // If you want to use a JavaScript library to manage your WebSocket
+  // connection, replace the code in JS with the alternate implementation.
+</script>
+
+</html>

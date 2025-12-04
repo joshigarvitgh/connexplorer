@@ -1,0 +1,4 @@
+#! /usr/bin/env bash
+
+# assumes the backend was installed
+pipenv run backend ~/Documents/conview/atlas_matrix_mapping.toml

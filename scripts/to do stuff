@@ -1,0 +1,16 @@
+=the zooming issues. 
+=Threshold should exclue the values put in. 
+=sturctual connectivity matrix? paula and see the network mapping =should not change get info from the paula.
+==mapping csv to json script. 
+=enable multiple matrices.
+=fix the colour range it should be dynamic. 
+=thick line bug still there. they are at wrong location.
+=fix the naming issue.
+=default for atlas use set1
+=value are missing on both side, ie the cursor value. 
+=funding info is missing for now, add the trr is there. 
+=network lables interactive double click to zoom 
+=when turnineg off lables popup info should not dissappera. 
+
+=only works on on ultra widwe. 
+=fix the colourlavel between the matrix and the brain
