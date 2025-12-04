@@ -426,10 +426,9 @@ updateRunning rtData ev = case ev of
         { rtData
           | currentAtlas = newAtlas
           , currentImg =
-              rtData.initData.atlas_image_map
-                |> DNE.get newAtlas
-                |> unwrapMaybe
-                |> LNE.head
+              DNE.get newAtlas rtData.initData.atlas_image_map
+                |> Maybe.map LNE.head
+                |> Maybe.withDefault rtData.currentImg
           , idx4d = 0
           , info_l = reset_side_all rtData.info_l
           , info_r = reset_side_all rtData.info_r
@@ -585,9 +584,9 @@ updateRunning rtData ev = case ev of
       newRt = { rtData | matrixHemisphere = hemi }
     in
     (Running newRt, matrixPortCmd newRt)
-    
-      
-  other -> (Error <| "unexpected event:" ++ Debug.toString other, Cmd.none)
+
+  other ->
+    (Error "Unexpected event received", Cmd.none)
 
 
 reset_coords : SideInfo -> SideInfo
@@ -1249,25 +1248,13 @@ errorStateFromDecoding decodeErr msg=
 
 
 unexpectedEv : Model -> Event -> ( Model, Cmd Event )
-unexpectedEv currModel ev =
-    let 
-      res =  Error <| "I am: \n" 
-        ++ Debug.toString currModel 
-        ++ "\nand unexpectedly received:\n" 
-        ++ Debug.toString ev
-    in
-    (res, Cmd.none)
+unexpectedEv currModel _ =
+    ( Error "Unexpected event in current state", Cmd.none )
 
-    
+
 unexpectedMFS : Model -> MsgFromServer -> ( Model, Cmd Event )
-unexpectedMFS currModel msg =
-    let 
-      res =  Error <| "I am: \n" 
-        ++ Debug.toString currModel 
-        ++ "\nand unexpectedly received:\n" 
-        ++ Debug.toString msg
-    in
-    (res, Cmd.none)
+unexpectedMFS currModel _ =
+    ( Error "Unexpected server message in current state", Cmd.none )
 
 getImageReqFromInitData : InitData -> Maybe SharedInfos -> MsgToServer
 getImageReqFromInitData initData mbSharedData =
@@ -1462,7 +1449,7 @@ maybeCoordDecoder =
     D.list D.int |> D.andThen (
       \l -> case l of 
         [x1, x2, x3] -> D.succeed <| MaybeCoords (Just x1) (Just x2) (Just x3)
-        other -> D.fail ("cant decode " ++ (Debug.toString other) ++ "as MaybeCoords")
+        _ -> D.fail "cant decode value as MaybeCoords"
     )
 
 rangeDecoder : D.Decoder MaybeHighLowPair
@@ -1555,7 +1542,7 @@ coordDecoder =
   D.list D.int |> D.andThen (
     \l -> case l of
       [x1, x2, x3] -> D.succeed <| Coords x1 x2 x3
-      other -> D.fail ("cant decode " ++ (Debug.toString other) ++ "as Coords")
+      _ -> D.fail "cant decode value as Coords"
     )
 
 
@@ -2112,17 +2099,17 @@ coordsToStr {x1, x2, x3} =  "("
 renderButtonRow : Side -> Html Event
 renderButtonRow side =
     let
-      buttonId = \bLabel -> "side-button-" ++ (Debug.toString bLabel)
+      buttonId = \bLabel -> "side-button-" ++ sideToString bLabel
       buttonFn = (\bLabel -> 
         [ div (css "border: 2px solid black; padding: 5px;width: 100%;") 
               [ input 
                   ([ type_ "radio"
                     , id <| buttonId bLabel
                     , name "sideselect"
-                    , value <| Debug.toString bLabel
+                    , value <| sideToString bLabel
                     , checked <| bLabel == side])
                   []
-                , label ((for <| buttonId bLabel) :: paddingpx 5) [ text <| Debug.toString <| bLabel]
+                , label ((for <| buttonId bLabel) :: paddingpx 5) [ text <| sideToString bLabel]
             ]
         ])
     in
@@ -2145,7 +2132,14 @@ renderMainView rtData =
                       [ select  ( onInput EvSelectedAtlas :: css "flex: 1 1 48%; min-width: 180px;" ++ prettySelect) 
                         <| List.map toSelectChild <| List.map (\(k, _) -> k) <| DNE.toList rtData.initData.atlas_image_map
                       , select ( onInput EvSelected4DImg :: css "flex: 1 1 48%; min-width: 180px;" ++ prettySelect) 
-                        <| List.map toSelectChild <| LNE.toList <| unwrapMaybe <| DNE.get rtData.currentAtlas rtData.initData.atlas_image_map 
+                        <|
+                          let
+                            imgs =
+                              DNE.get rtData.currentAtlas rtData.initData.atlas_image_map
+                                |> Maybe.map LNE.toList
+                                |> Maybe.withDefault [ rtData.currentImg ]
+                          in
+                          List.map toSelectChild imgs
                       ]
                   , div (css "position: relative; width: 100%;")
                   [ img 
@@ -2169,10 +2163,6 @@ renderMainView rtData =
               ]
           ]
       ]
-
-unwrapMaybe mbRes = case mbRes of
-  Just res -> res
-  Nothing -> Debug.todo "this can't happen. If it does, it's a bug"
 
 renderMatrixView : RtData -> Html Event
 renderMatrixView rtData =

@@ -8,6 +8,7 @@ from pathlib import Path
 import traceback
 import tomllib
 import math
+import os
 
 import websockets
 from websockets import WebSocketServerProtocol
@@ -352,7 +353,8 @@ def get_dummy_img():
 
 
 async def main_loop(rt_state):
-    async with websockets.serve(lambda socket: handler(socket, rt_state), "", 8001):
+    port = int(os.environ.get("PORT", 8001))
+    async with websockets.serve(lambda socket: handler(socket, rt_state), "", port):
         await asyncio.Future()  # run forever
 
 
@@ -371,3 +373,7 @@ def main(mapping_file: str):
 
 def cli():
     argh.dispatch_command(main)
+
+
+if __name__ == "__main__":
+    cli()
