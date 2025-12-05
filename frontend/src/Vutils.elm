@@ -87,13 +87,14 @@ overlay = css """
 
 containerCSS = css """
     min-height: 3.3em;
-    background-color: #00008c;
+    background-color: transparent;
     width: 100%;
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 6px 12px;
-    gap: 8px;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    padding: 0;
+    margin: 0;
 """
 
 headerCSS = css """
@@ -108,15 +109,8 @@ headerCSS = css """
 
 tudWrapper : Html msg -> Html msg -> Html msg
 tudWrapper headerNav content = 
-    div (css "max-height: 100vh; display: flex; flex-direction: column;") 
-        [ div containerCSS 
-              [ div (css "display: inline-flex; align-items: center; gap: 8px;")
-                    [ img (src "/TUD_Logo_RGB_horizontal_weiß_de.svg" :: css "max-height: 2.3em; margin:0; padding: 0;") []
-                    , h1 headerCSS [text "ConnExplorer"]
-                    ]
-              , div (css "display: flex; justify-content: flex-end; align-items: center; gap: 8px;")
-                    [ headerNav ]
-              ]
+    div (css "max-height: 100vh; display: flex; flex-direction: column; width: 100%; margin: 0;") 
+        [ div containerCSS [ headerNav ]
         , div (css "margin: 0; padding: 0; flex: 1 1 auto; width: 100%; height: auto; min-height: 100vh; background: transparent; box-shadow: none; border: none; overflow: hidden;")
               [ content ]
         ]

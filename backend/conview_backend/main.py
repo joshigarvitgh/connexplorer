@@ -8,7 +8,6 @@ from pathlib import Path
 import traceback
 import tomllib
 import math
-import os
 
 import websockets
 from websockets import WebSocketServerProtocol
@@ -158,7 +157,7 @@ def get_img_with_pos(msg, rt_state: RuntimeState, session_state: SessionState):
         res_msg["mtype"] = "ImgWithCoord"
         res_msg["coords_l"] = msg["infos_l"]["coords"]
         res_msg["coords_r"] = msg["infos_r"]["coords"]
-        res_msg["idx_4d"] = msg["idx_4d"]
+        res_msg["idx_4d"] = res_msg.get("idx_4d", msg.get("idx_4d", -1))
         return res_msg
 
     
@@ -175,16 +174,38 @@ def image_coords_2_mat_coords(imgCoord: ImgCoords, imgSize: ImgSize,
     return MatCoords(round(row), round(col))
 
 
+def source_idx_from_left_coords(atlas_img, bg_affine, left_coords, n_sources):
+    """
+    Map the left-panel coordinates to a valid 4D source slice index.
+    """
+    try:
+        l_idx = mni_2_index(bg_affine, left_coords)
+        rid = int(round(atlas_img.get_fdata()[l_idx]))
+    except Exception:
+        return None
+
+    if rid <= 0:
+        return None
+    if 0 <= rid < n_sources:
+        return rid
+    if 0 <= rid - 1 < n_sources:
+        return rid - 1
+    return None
+
+
 def get_image(msg, rt_state, session_state):
     atlas_name = msg["atlas_name"]
     atlas_data = rt_state.atlanti[atlas_name]
     four_d_img_name = msg["img_name"]
     four_d_img = rt_state.atlas_to_matrix_map[atlas_name][four_d_img_name]
 
-    four_d_idx = msg["idx_4d"]
     infos_l = decode_side_info(msg["infos_l"])
     infos_r = decode_side_info(msg["infos_r"])
     infos_r = conview.resolve_connectivity_vrange(infos_r, four_d_img)
+
+    four_d_idx = source_idx_from_left_coords(
+        atlas_data.img, rt_state.bg_img.affine, infos_l.coords, four_d_img.shape[3]
+    ) or msg["idx_4d"]
 
     surf = pg.Surface(render_shape)
     label_l, label_r, connectivities, r_idx, selected_col_id, value_l, value_r, color_l, color_r, vrange_l, vrange_r = conview.render_img(atlas_data.img, rt_state.bg_img, four_d_img, four_d_idx,
@@ -207,7 +228,8 @@ def get_image(msg, rt_state, session_state):
         color_r=color_r,
         vrange_l=list(vrange_l),
         vrange_r=list(vrange_r),
-        matrix=matrix_payload)
+        matrix=matrix_payload,
+        idx_4d=four_d_idx)
 
 
 def build_matrix_payload(matrix_summary: MatrixSummary, infos_r: SideInfo, selected_row_id: int, selected_col_id: int | None):
@@ -257,6 +279,13 @@ def build_matrix_payload(matrix_summary: MatrixSummary, infos_r: SideInfo, selec
     region_vals, reg_min, reg_max = threshold_values(region_base.get("values", []), infos_r.threshold)
     net_vals, net_min, net_max = threshold_values(net_base.get("values") if net_base else None, infos_r.threshold)
 
+    def clamp_selected(sel_id, candidates):
+        if candidates is None:
+            return -1
+        if sel_id in candidates:
+            return sel_id
+        return candidates[0] if candidates else -1
+
     region_payload = dict(
         axis="regions",
         index=selected_row_id,
@@ -285,9 +314,10 @@ def build_matrix_payload(matrix_summary: MatrixSummary, infos_r: SideInfo, selec
         y_nets=region_base.get("y_nets", []),
         x_nets_full=region_base.get("x_nets_full", []),
         y_nets_full=region_base.get("y_nets_full", []),
-        selected_row_id=selected_row_id,
-        selected_col_id=selected_col_id if selected_col_id is not None else -1
+        selected_row_id=clamp_selected(selected_row_id, region_base.get("y_ids", [])),
+        selected_col_id=clamp_selected(selected_col_id if selected_col_id is not None else -1, region_base.get("x_ids", []))
     )
+    region_payload["index"] = region_payload["selected_row_id"]
 
     network_payload = None
     if net_base:
@@ -353,8 +383,7 @@ def get_dummy_img():
 
 
 async def main_loop(rt_state):
-    port = int(os.environ.get("PORT", 8001))
-    async with websockets.serve(lambda socket: handler(socket, rt_state), "", port):
+    async with websockets.serve(lambda socket: handler(socket, rt_state), "", 8001):
         await asyncio.Future()  # run forever
 
 
@@ -373,7 +402,3 @@ def main(mapping_file: str):
 
 def cli():
     argh.dispatch_command(main)
-
-
-if __name__ == "__main__":
-    cli()

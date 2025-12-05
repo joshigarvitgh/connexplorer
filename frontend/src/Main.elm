@@ -1291,7 +1291,7 @@ getImageReqFromInitData initData mbSharedData =
 
 
 defaultSideInfoLeft : SideInfo
-defaultSideInfoLeft = SideInfo (StringCoords "0" "0" "0") (StringHighLowPair "-" "-") (StringHighLowPair "-" "-") True Nothing Nothing Nothing "Set1"
+defaultSideInfoLeft = SideInfo (StringCoords "0" "0" "0") (StringHighLowPair "-" "-") (StringHighLowPair "-" "-") True Nothing Nothing Nothing "tab20"
 
 defaultSideInfoRight : SideInfo
 defaultSideInfoRight = SideInfo (StringCoords "0" "0" "0") (StringHighLowPair "-" "-") (StringHighLowPair "-" "-") True Nothing Nothing Nothing "coolwarm"
@@ -1601,7 +1601,7 @@ renderRunning : RtData -> Html Event
 renderRunning rtData =
   div (fullwidth ++ css "background: rgba(255,255,255,1);max-height:100%; position: relative;") 
       [ loadingStyles
-      , div (row "12px" ++ hcenter ++ css "align-items: flex-start; padding: 0 8px; margin-top: 4px;")
+      , div (row "12px" ++ hcenter ++ css "align-items: flex-start; padding: 0 8px; margin-top: 12px;")
             [ renderMainView rtData ]
       , dialogView rtData
       , renderLoadingOverlay rtData.loading
@@ -1636,29 +1636,48 @@ renderLoadingOverlay isLoading =
 topNav : RtData -> Html Event
 topNav rtData =
   let
-    tabsStyle = css "display: flex; gap: 6px; flex-wrap: wrap; align-items: center; font-size: 12px;"
+    navBarStyle =
+      css "display: grid; grid-template-columns: auto minmax(0,1fr) auto; align-items: center; gap: clamp(8px, 1vw, 12px); padding: 0 clamp(8px, 1vw, 12px); height: clamp(3.4em, 8vw, 3.8em); background: #00008c; color: #ffffff; position: sticky; top: 0; left: 0; right: 0; width: 100%; box-sizing: border-box; z-index: 1500; box-shadow: 0 2px 8px rgba(0,0,0,0.18);"
+
+    brandStyle =
+      css "display: inline-flex; align-items: center; gap: 10px; padding: 6px 10px; background: transparent; color: #ffffff;"
+
+    navLinksStyle =
+      css "display: inline-flex; align-items: center; gap: clamp(8px, 1.6vw, 16px); flex-wrap: wrap; justify-content: center; padding: 0 6px; color: #ffffff; font-weight: 800; text-transform: uppercase; letter-spacing: 0.35px; font-size: clamp(10px, 2vw, 12px); min-width: 0;"
+
     tabLink hrefTxt labelTxt =
-      a ([ href hrefTxt, target "_blank" ]
-        ++ css "padding: 4px 8px; background: rgba(255,255,255,0.14); border-radius: 7px; color: #f8fafc; text-decoration: none; font-weight: 700; font-size: 12px; letter-spacing: 0.05px; transition: background 0.15s;")
+      a
+        ([ href hrefTxt, target "_blank" ]
+          ++ css "color: #ffffff; text-decoration: none; font-weight: 800; letter-spacing: 0.45px; font-size: 12px; padding: 6px 4px; border-bottom: 2px solid transparent; transition: border-color 0.2s, color 0.2s;"
+        )
         [ text labelTxt ]
+
+    brand =
+      div brandStyle
+        [ img (src "/TUD_Logo_RGB_horizontal_weiß_de.svg" :: css "height: clamp(34px, 7vw, 48px); width: auto; display: block;") []
+        , span (css "color: #ffffff; font-weight: 900; letter-spacing: 0.6px; text-transform: uppercase; font-size: clamp(13px, 2.4vw, 15px);") [ text "ConnExplorer" ]
+        ]
+
     shareBtn =
       button
         ([ onClick EvShareButtonPressed ]
-          ++ css "padding: 4px 10px; background: #f8fafc; color: #001450; border: 1px solid rgba(255,255,255,0.25); border-radius: 8px; font-weight: 800; font-size: 12px; cursor: pointer; transition: transform 0.1s ease;"
+          ++ css "padding: 9px 14px; background: transparent; color: #ffffff; border: 1px solid rgba(255,255,255,0.7); border-radius: 12px; font-weight: 900; font-size: 11px; letter-spacing: 0.9px; text-transform: uppercase; cursor: pointer; transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;"
         )
         [ text "Share" ]
   in
-  div []
-    [ div tabsStyle
-        ([ tabLink "/about.html" "About"
-         , tabLink "https://tu-dresden.de/impressum" "Legal Notice"
-         , tabLink "https://tu-dresden.de/impressum#ck_datenschutz" "Privacy"
-         , tabLink "https://tu-dresden.de/transparenzgesetz" "Transparency Act"
-         , tabLink ("/atlas-info.html?atlas=" ++ rtData.currentAtlas) "Atlas Info"
-         , tabLink "https://tu-dresden.de/barrierefreiheit" "Accessibility"
-         , div (css "flex: 1;") []
-         , shareBtn
-         ] )
+  div navBarStyle
+    [ brand
+    , div (css "display: flex; justify-content: center;")
+        [ div navLinksStyle
+            [ tabLink "/about.html" "About"
+            , tabLink "https://tu-dresden.de/impressum" "Legal Notice"
+            , tabLink "https://tu-dresden.de/impressum#ck_datenschutz" "Privacy"
+            , tabLink "https://tu-dresden.de/transparenzgesetz" "Transparency Act"
+            , tabLink ("/atlas-info.html?atlas=" ++ rtData.currentAtlas) "Atlas Info"
+            , tabLink "https://tu-dresden.de/barrierefreiheit" "Accessibility"
+            ]
+        ]
+    , div (css "display: flex; justify-content: flex-end; align-items: center;") [ shareBtn ]
     ]
 
 
@@ -1778,8 +1797,10 @@ renderSideOverlay side si rtData =
         Just v -> "Value: " ++ String.fromFloat v
         Nothing -> "Value: -"
     onFocusSide = onFocus (EvSideSelect <| sideToString side)
+    baseSizing =
+      "flex:1; min-width: 140px; max-width: 100%; font-size: clamp(7px, 0.78vw, 10.5px); line-height: 1.22;"
   in
-  div (column "4px" ++ css "flex:1; min-width: 180px; font-size: clamp(7px, 0.8vw, 11px); line-height: 1.26;")
+  div (column "4px" ++ css baseSizing)
     [ p (css "font-size: clamp(9px, 1vw, 13px); color: #000; font-weight: 600; margin: 0;") [ text regionLabel ]
     , p (css "margin: 0; color: #1f2430; font-size: clamp(8px, 0.9vw, 10px); font-weight: 500;") [ text valueLabel ]
     , renderMniCoords si.coords rtData.invalidMniCoord rtData.initData.min_mni rtData.initData.max_mni side [ onFocusSide ]
@@ -1831,19 +1852,22 @@ renderHemisphereToggle rtData =
       let
         isActive = rtData.matrixHemisphere == hemi
         baseStyle =
-          "padding: 6px 10px; border-radius: 6px; border: 1px solid #c9d0dc; background: "
-            ++ (if isActive then "#001450" else "#f5f7fb")
+          "padding: 7px 12px; border-radius: 10px; border: 1px solid "
+            ++ (if isActive then "#001450" else "#d4dae4")
+            ++ "; background: "
+            ++ (if isActive then "linear-gradient(135deg,#0f172a,#102a8a)" else "#f7f9fd")
             ++ "; color: "
-            ++ (if isActive then "white" else "#001450")
-            ++ "; cursor: pointer; font-size: 13px; min-width: 70px; text-align: center; transition: all 0.15s;"
+            ++ (if isActive then "white" else "#0f172a")
+            ++ "; cursor: pointer; font-size: 13px; min-width: 78px; text-align: center; transition: all 0.15s; box-shadow: "
+            ++ (if isActive then "0 4px 12px rgba(0,0,0,0.15)" else "0 1px 2px rgba(0,0,0,0.05)")
       in
       button
         ([ onClick <| EvSetHemisphere <| hemisphereToString hemi ]
           ++ css baseStyle)
         [ text label ]
   in
-  div (row "4px" ++ css "align-items: center; flex-wrap: wrap; gap: 6px;")
-    [ text "Hemisphere:"
+  div (row "6px" ++ css "align-items: center; flex-wrap: wrap; gap: 8px; padding: 6px 10px; background: #eef2fb; border: 1px solid #d4dae4; border-radius: 12px;")
+    [ span (css "font-weight: 500; font-size: 13px; color: #0f172a; letter-spacing: 0.2px;") [ text "Hemisphere:" ]
     , opt "Both" BothHemis
     , opt "Left" LeftHemis
     , opt "Right" RightHemis
@@ -1986,14 +2010,15 @@ allowedColorMaps =
   , ColorOption "Spectral" "linear-gradient(90deg,#9e0142,#f46d43,#fdae61,#fee08b,#e6f598,#abdda4,#66c2a5,#3288bd,#5e4fa2)" divg
   , ColorOption "coolwarm" "linear-gradient(90deg,#3b4cc0,#7aa0f2,#b5c6e5,#e5c6b5,#f2a07a,#c03b4c)" divg
   , ColorOption "Set1" "linear-gradient(90deg,#e41a1c,#377eb8,#4daf4a,#984ea3,#ff7f00,#ffff33,#a65628,#f781bf,#999999)" qual
+  , ColorOption "tab20" "linear-gradient(90deg,#1f77b4,#aec7e8,#ff7f0e,#ffbb78,#2ca02c,#98df8a,#d62728,#ff9896,#9467bd,#c5b0d5,#8c564b,#c49c94,#e377c2,#f7b6d2,#7f7f7f,#c7c7c7,#bcbd22,#dbdb8d,#17becf,#9edae5)" qual
   , ColorOption "Set2" "linear-gradient(90deg,#66c2a5,#fc8d62,#8da0cb,#e78ac3,#a6d854,#ffd92f,#e5c494,#b3b3b3)" qual
   , ColorOption "Dark2" "linear-gradient(90deg,#1b9e77,#d95f02,#7570b3,#e7298a,#66a61e,#e6ab02,#a6761d,#666666)" qual
   ]
 renderThreshold : Side -> StringHighLowPair -> List (Attribute Event) -> Html Event
 renderThreshold side thresh extras =
     let
-      compact = css "max-width: clamp(46px, 10vw, 80px); padding: 2px 4px; font-size: clamp(8px, 0.9vw, 11px); height: 20px;"
-      labelTxt txt = span (css "font-weight: 700; color: #000; margin-right: 6px; font-size: clamp(9px, 1vw, 12px);") [ text txt ]
+      compact = css "max-width: clamp(42px, 9vw, 72px); padding: 2px 4px; font-size: clamp(8px, 0.85vw, 11px); height: 18px;"
+      labelTxt txt = span (css "font-weight: 700; color: #000; margin-right: 6px; font-size: clamp(8px, 0.95vw, 11px);") [ text txt ]
     in
     div (row "5px" ++ css "align-items: center; flex-wrap: nowrap; line-height: 1;")
       [ labelTxt "Threshold:"
@@ -2044,8 +2069,8 @@ renderVRange side vrange extras =
 renderMniCoords : StringCoords -> Bool -> Coords -> Coords -> Side -> List (Attribute Event) -> Html Event
 renderMniCoords {x1, x2, x3} invalidCoord minMni maxMni side extraAttrs =
   let 
-    compact = css "max-width: clamp(50px, 12vw, 90px); padding: 3px 5px; font-size: clamp(9px, 1vw, 12px); height: 22px;"
-    labelTxt txt = span (css "font-weight: 700; color: #000; margin-right: 6px; line-height: 1; font-size: clamp(10px, 1.05vw, 13px);") [ text txt ]
+    compact = css "max-width: clamp(44px, 11vw, 80px); padding: 2px 4px; font-size: clamp(8px, 0.95vw, 11px); height: 18px;"
+    labelTxt txt = span (css "font-weight: 700; color: #000; margin-right: 6px; line-height: 1; font-size: clamp(9px, 1vw, 12px);") [ text txt ]
     mni_fields = 
       div (row "5px" ++ css "align-items: center;")
         [ labelTxt "MNI:"
@@ -2126,9 +2151,9 @@ renderMainView : RtData -> Html Event
 renderMainView rtData = 
   div (column "12px" ++ css "width: 100%; max-width: none;") 
       [ div [ id "figure-shell" ]
-          [ div [ id "figure-row" ]
-              [ div [ id "brain-panel" ]
-                  [ div (css "display: flex; gap: 10px; flex-wrap: wrap; align-items: center; justify-content: flex-start;") 
+      [ div [ id "figure-row" ]
+          [ div [ id "brain-panel" ]
+              [ div (css "display: flex; gap: 10px; flex-wrap: wrap; align-items: center; justify-content: flex-start;") 
                       [ select  ( onInput EvSelectedAtlas :: css "flex: 1 1 48%; min-width: 180px;" ++ prettySelect) 
                         <| List.map toSelectChild <| List.map (\(k, _) -> k) <| DNE.toList rtData.initData.atlas_image_map
                       , select ( onInput EvSelected4DImg :: css "flex: 1 1 48%; min-width: 180px;" ++ prettySelect) 
@@ -2148,9 +2173,17 @@ renderMainView rtData =
                     , on "click" (D.map EvImageClick clickDecoder)
                     ]  ++ css "width: 100%; height: auto; max-height: 80vh; object-fit: contain; display: block; border: none; outline: none; background: transparent;") 
                     []
-                      , div (css "position: absolute; right: calc(50% + 6px); top: calc(64% + clamp(0px, (1400px - 100vw), 600px)); transform: translateY(-50%); width: clamp(140px, 20vw, 200px); background: rgba(255,255,255,0); padding: clamp(4px, 0.8vw, 10px); border-radius: 10px; box-shadow: none; border: none; z-index: 2;")
+                      , let
+                          overlayBase =
+                            "position: absolute; top: 65%; transform: translateY(-50%); max-width: calc(50% - 8px); width: clamp(110px, 45vw, 220px); padding: clamp(3px, 1.2vw, 10px); background: rgba(255,255,255,0); border-radius: 10px; box-shadow: none; border: none; z-index: 2;"
+                        in
+                        div (css (overlayBase ++ "right: 50%; text-align: left;")) 
                           [ renderSideOverlay Left rtData.info_l rtData ]
-                      , div (css "position: absolute; left: clamp(70%, 74%, 78%); top: calc(64% + clamp(0px, (1400px - 100vw), 600px)); transform: translateY(-50%); width: clamp(140px, 20vw, 200px); background: rgba(255,255,255,0); padding: clamp(4px, 0.8vw, 10px); border-radius: 10px; box-shadow: none; border: none; z-index: 2;")
+                      , let
+                          overlayBase =
+                            "position: absolute; top: 65%; transform: translateY(-50%); max-width: calc(50% - 8px); width: clamp(110px, 45vw, 220px); padding: clamp(3px, 1.2vw, 10px); background: rgba(255,255,255,0); border-radius: 10px; box-shadow: none; border: none; z-index: 2;"
+                        in
+                        div (css (overlayBase ++ "right: clamp(4px, 3vw, 14px); text-align: left;")) 
                           [ renderSideOverlay Right rtData.info_r rtData ]
                   ]
               , div (row "10px" ++ css "align-items: flex-start; flex-wrap: wrap; padding-top: clamp(12px, 4vw, 28px); background: transparent;")
@@ -2181,16 +2214,16 @@ renderMatrixHeader rtData =
     labelSwitch =
       let
         active = rtData.matrixLabelsOn
-        trackColor = if active then "#001450" else "#e5e7eb"
-        knobTransform = if active then "translateX(16px)" else "translateX(0px)"
+        trackColor = if active then "linear-gradient(135deg,#1e3a8a,#0f172a)" else "#e5e7eb"
+        knobTransform = if active then "translateX(22px)" else "translateX(0px)"
       in
       label
         (css "display: inline-flex; align-items: center; gap: 8px; cursor: pointer; user-select: none;")
-        [ span (css "font-size: 14px; color: #0f172a; font-weight: 600;") [ text "Labels" ]
+        [ span (css "font-size: 14px; color: #0f172a; font-weight: 700; letter-spacing: 0.2px;") [ text "Labels" ]
         , span
-            (css ("position: relative; width: 36px; height: 20px; background: " ++ trackColor ++ "; border-radius: 999px; transition: all 0.15s; display: inline-block;"))
+            (css ("position: relative; width: 46px; height: 24px; background: " ++ trackColor ++ "; border-radius: 999px; transition: all 0.15s; display: inline-block; box-shadow: inset 0 1px 2px rgba(0,0,0,0.12);"))
             [ span
-                (css ("position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 999px; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.25); transform: " ++ knobTransform ++ "; transition: transform 0.15s;"))
+                (css ("position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 999px; background: #f8fafc; box-shadow: 0 1px 4px rgba(0,0,0,0.2); transform: " ++ knobTransform ++ "; transition: transform 0.15s;"))
                 []
             ]
         , input

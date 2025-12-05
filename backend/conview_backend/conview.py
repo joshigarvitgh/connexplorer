@@ -261,27 +261,52 @@ def compute_region_connectivity_matrix(atlas_img, matrix_img, label_map, region_
     target_labels = [label_by_id.get(rid, f"Region {rid}") for rid in ordered_x_ids]
     centers = [centers_by_id.get(rid, (0.0, 0.0, 0.0)) for rid in ordered_x_ids]
 
-    reversed_networks = list(reversed(ordered_networks))
-    ordered_y_ids = [rid for net in reversed_networks for rid in members_by_net.get(net, [])]
-    if not ordered_y_ids:
-        ordered_y_ids = ordered_x_ids[:]
+    def src_idx_for_rid(rid: int):
+        """
+        Map a region id to the 4D source index. Most 4D matrices use the region
+        id as the slice index (1-based in many atlases). Handle both 0- and
+        1-based cases defensively and ignore out-of-range ids.
+        """
+        if 0 <= rid < n_sources:
+            return rid
+        if 0 <= (rid - 1) < n_sources:
+            return rid - 1
+        return None
 
-    if order_pos:
-        ordered_y_ids = [rid for rid in ordered_y_ids if rid in order_pos]
-        y_idx = [order_pos[rid] for rid in ordered_y_ids]
-    else:
-        ordered_y_ids = [rid for rid in ordered_y_ids if rid in idx_by_id]
-        y_idx = [idx_by_id[rid] for rid in ordered_y_ids]
+    reversed_networks = list(reversed(ordered_networks))
+    ordered_y_pairs = []
+    y_counts = []
+    for net in reversed_networks:
+        count = 0
+        for rid in members_by_net.get(net, []):
+            src_idx = src_idx_for_rid(rid)
+            if src_idx is None:
+                continue
+            ordered_y_pairs.append((rid, src_idx))
+            count += 1
+        y_counts.append(count)
+
+    if not ordered_y_pairs:
+        # Fallback: keep rows aligned to available sources
+        for rid in ordered_x_ids:
+            src_idx = src_idx_for_rid(rid)
+            if src_idx is not None:
+                ordered_y_pairs.append((rid, src_idx))
+        y_counts = [len(ordered_y_pairs)]
+
+    y_idx = [src for (_rid, src) in ordered_y_pairs]
+    ordered_y_ids = [rid for (rid, _src) in ordered_y_pairs]
 
     values = values[y_idx, :]
     source_ids = ordered_y_ids
+    source_slice_ids = y_idx
 
     boundaries_x = [0]
     for net in ordered_networks:
         boundaries_x.append(boundaries_x[-1] + len(members_by_net.get(net, [])))
     boundaries_y = [0]
-    for net in reversed_networks:
-        boundaries_y.append(boundaries_y[-1] + len(members_by_net.get(net, [])))
+    for c in y_counts:
+        boundaries_y.append(boundaries_y[-1] + c)
 
     order_meta_final["groups"] = [members_by_net.get(net, []) for net in ordered_networks]
     order_meta_final["net_labels"] = network_order if network_order else ordered_networks
@@ -291,7 +316,7 @@ def compute_region_connectivity_matrix(atlas_img, matrix_img, label_map, region_
     order_meta_final["net_boundaries"] = boundaries_x
     order_meta_final["net_boundaries_y"] = boundaries_y
 
-    region_base = build_base_payload(values, source_ids, region_ids, target_labels, centers, order_meta_final, map_dict)
+    region_base = build_base_payload(values, source_ids, source_slice_ids, region_ids, target_labels, centers, order_meta_final, map_dict)
     network_base = build_network_payload(values, source_ids, region_ids, target_labels, centers, label_map, map_dict, order_meta_final)
 
     return MatrixSummary(values, source_ids, region_ids, target_labels, centers, dict(
@@ -300,7 +325,7 @@ def compute_region_connectivity_matrix(atlas_img, matrix_img, label_map, region_
     ))
 
 
-def build_base_payload(values, source_ids, region_ids, target_labels, centers, order_meta=None, region_network_map=None):
+def build_base_payload(values, source_ids, source_indices, region_ids, target_labels, centers, order_meta=None, region_network_map=None):
     clean_values = [[None if np.isnan(v) else float(v) for v in row] for row in values.tolist()]
     finite_vals = values[np.isfinite(values)]
     vmin = float(finite_vals.min()) if finite_vals.size else None
@@ -311,14 +336,13 @@ def build_base_payload(values, source_ids, region_ids, target_labels, centers, o
     y_nets = []
     source_labels = []
     source_centers = []
-    for src in region_ids:
-        if src in region_ids:
-            idx = region_ids.index(src)
-            source_labels.append(target_labels[idx])
-            source_centers.append(target_centers_list[idx])
+    for src in source_ids:
+        lbl = f"Region {src}"
+        if src in centers_by_id:
+            source_centers.append(list(map(float, centers_by_id.get(src, (0.0, 0.0, 0.0)))))
         else:
-            source_labels.append(f"Region {src}")
             source_centers.append([0.0, 0.0, 0.0])
+        source_labels.append(lbl)
 
     id_to_nd = {}
     id_to_short = {}
@@ -368,7 +392,7 @@ def build_base_payload(values, source_ids, region_ids, target_labels, centers, o
 
     # Axes use name_alt; popups use atlas_label (network)
     target_labels = popup_labels
-    source_labels = [popup_map.get(src, f"Region {src}") for src in source_ids]
+    source_labels = [popup_map.get(src, id_to_alt.get(src, f"Region {src}")) for src in source_ids]
     target_short = axis_labels
     source_short = [axis_map.get(src, id_to_alt.get(src, lbl)) for src, lbl in zip(source_ids, source_labels)]
 
@@ -379,7 +403,7 @@ def build_base_payload(values, source_ids, region_ids, target_labels, centers, o
         x_short_labels=target_short,
         y_short_labels=source_short,
         x_ids=region_ids,
-        y_ids=source_ids,
+        y_ids=source_indices,
         x_centers=target_centers_list,
         y_centers=source_centers,
         x_nets=x_nets,
