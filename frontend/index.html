@@ -212,9 +212,7 @@
   });
 
   // Create your WebSocket with a small send queue so we don't drop the first init message.
-  var socket = new WebSocket(
-    (location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host + '/ws'
-  );
+  var socket = new WebSocket('ws://localhost:8001');
   var socketOpen = false;
   var socketQueue = [];
 
